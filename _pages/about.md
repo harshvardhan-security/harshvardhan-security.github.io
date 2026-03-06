@@ -1,15 +1,15 @@
 ---
 layout: about
-title: about
+title: Home
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle:
 
 profile:
   align: right
   image: My_Photo.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p><a href='https://www.linkedin.com/in/harshvardhan-singh-354b25246'>Linked In Profile</a></p>
+    <p><a href='https://www.linkedin.com/in/harshvardhan-singh-354b25246'>Linked In Profile</a></p><br>
     <p>Mumbai</p>
     <p>India</p>
 
