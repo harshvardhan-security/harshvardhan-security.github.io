@@ -26,9 +26,14 @@ latest_posts:
   scrollable: true # adds a vertical scroll bar if there are more than 3 new posts items
   limit: 3 # leave blank to include all the blog posts
 ---
+Cybersecurity Consultant | Application Security | AI Security Research
 
-I am a Cybersecurity Consultant at EY with hands-on experience in Application Security, Vulnerability Assessment & Penetration Testing (VAPT), Secure Architecture, and Source Code Review. My work focuses on strengthening security across applications, infrastructure, and enterprise environments by identifying vulnerabilities, evaluating security controls, and designing risk-driven remediation strategies aligned with modern security standards and regulatory frameworks.
+Cybersecurity Consultant at EY with hands-on experience in Application Security,Vulnerability Assessment & Penetration Testing (VAPT), Secure Architecture, and Source Code Review. I focus on identifying vulnerabilities across applications and infrastructure, designing secure architectures, and strengthening enterprise security posture through risk-driven security engineering.
 
-I have contributed to large-scale security assessments within the banking sector, performing security reviews across 30+ enterprise applications and multiple departments. My experience includes application and API security testing, network architecture and firewall reviews, secure configuration analysis, database security assessments, and incident investigation support, working closely with engineering and security teams to improve overall system resilience.
-
-Alongside enterprise security work, I actively explore the intersection of Artificial Intelligence and Cybersecurity. With a Master’s degree in Cyber Security from NFSU, my long-term focus is on building AI-driven security systems for intelligent threat detection, behavioral analysis, and automated defense mechanisms, aiming to contribute to the next generation of secure and intelligent computing platforms.
+Key Expertise
+• Application Security Testing
+• API Security & Source Code Review
+• Network Security Architecture
+• Secure Configuration & Hardening
+• Database Security Assessments
+• AI Security & Threat Detection Research
