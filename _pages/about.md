@@ -38,38 +38,3 @@ Cybersecurity Consultant at EY with hands-on experience in Application Security,
 • Database Security Assessments<br>
 • AI Security & Threat Detection Research<br><br>
 
-<div style="margin-top:20px">
-
-<a href="/projects/" style="
-padding:10px 20px;
-background-color:#2563eb;
-color:white;
-text-decoration:none;
-border-radius:6px;
-margin-right:10px;
-font-weight:500;">
-View Projects
-</a>
-
-<a href="/assets/Harshvardhan_Singh_CV.pdf" style="
-padding:10px 20px;
-background-color:#16a34a;
-color:white;
-text-decoration:none;
-border-radius:6px;
-margin-right:10px;
-font-weight:500;">
-Download CV
-</a>
-
-<a href="/contact/" style="
-padding:10px 20px;
-background-color:#f59e0b;
-color:white;
-text-decoration:none;
-border-radius:6px;
-font-weight:500;">
-Contact Me
-</a>
-
-</div>
