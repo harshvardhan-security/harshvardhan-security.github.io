@@ -30,7 +30,7 @@ latest_posts:
 <br><br>
 Cybersecurity Consultant at EY with hands-on experience in Application Security,Vulnerability Assessment & Penetration Testing (VAPT), Secure Architecture, and Source Code Review. I focus on identifying vulnerabilities across applications and infrastructure, designing secure architectures, and strengthening enterprise security posture through risk-driven security engineering.
 
-Key Expertise
+<b>Key Expertise</b><br>
 • Application Security Testing<br>
 • API Security & Source Code Review<br>
 • Network Security Architecture<br>
