@@ -9,7 +9,7 @@ profile:
   image: My_Photo.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p><a href='https://www.linkedin.com/in/harshvardhan-singh-354b25246'>Linked In Profile</a></p><br>
+    <p><b><a href='https://www.linkedin.com/in/harshvardhan-singh-354b25246'>Linked In Profile</b></a></p><br>
     <p>Mumbai</p>
     <p>India</p>
 
@@ -30,7 +30,7 @@ latest_posts:
 <br><br>
 Cybersecurity Consultant at EY with hands-on experience in Application Security,Vulnerability Assessment & Penetration Testing (VAPT), Secure Architecture, and Source Code Review. I focus on identifying vulnerabilities across applications and infrastructure, designing secure architectures, and strengthening enterprise security posture through risk-driven security engineering.
 
-<b>Key Expertise</b><br>
+<b>Key Expertise</b><br><br>
 • Application Security Testing<br>
 • API Security & Source Code Review<br>
 • Network Security Architecture<br>
