@@ -16,6 +16,7 @@ description: >
 footer_text: ""
 keywords: cybersecurity, application security, VAPT, AI security, penetration testing, AI Security Research, Security Research
 lang: en
+icon: assets/img/favicon.png
 
 url: https://harshvardhan-security.github.io
 baseurl: ""
