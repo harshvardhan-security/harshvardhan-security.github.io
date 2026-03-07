@@ -6,7 +6,7 @@ subtitle:
 
 profile:
   align: right
-  image: My_Image1
+  image: My_Image1.png
   image_circular: false # crops the image to make it circular
   more_info: >
     <p><b><a href='https://www.linkedin.com/in/harshvardhan-singh-354b25246'>Linked In Profile</b></a></p><br>
