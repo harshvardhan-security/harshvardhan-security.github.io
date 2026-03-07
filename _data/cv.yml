@@ -8,7 +8,7 @@ cv:
 
   social_networks:
     - network: X
-      username: Harshvardhan Singh
+      username: ""
     - network: GitHub
       username: harshvardhan-security
     - network: LinkedIn
@@ -42,7 +42,7 @@ cv:
 
     Experience:
       - company: Ernst & Young LLP
-        position: Cyber Security Consultant
+        position: Consultant
         location: Mumbai, IN
         start_date: 2025
         end_date: Present
@@ -57,12 +57,11 @@ cv:
         location: Mumbai, IN
         start_date: 2024
         end_date: 2025
-        summary: summary: Delivered enterprise security assessments across banking infrastructure and applications, focusing on vulnerability analysis, architecture review, and secure configuration.
+        summary: Delivered enterprise security assessments across banking infrastructure and applications, focusing on vulnerability analysis, architecture review, and secure configuration.
         highlights:
-        - Conducted enterprise security assessments for 30+ applications across multiple departments in a public sector bank.
-        - Performed vulnerability assessments, source code reviews, API security analysis, and infrastructure configuration reviews.
-        - Supported RPA security assessments across Automation Edge, Automation Anywhere, and Sheetkraft platforms focusing on governance, access control, and encryption.
-Consultant
+          - Conducted enterprise security assessments for 30+ applications across multiple departments in a public sector bank.
+          - Performed vulnerability assessments, source code reviews, API security analysis, and infrastructure configuration reviews.
+          - Supported RPA security assessments across Automation Edge, Automation Anywhere, and Sheetkraft platforms focusing on governance, access control, and encryption.
 
 
     Volunteer:
