@@ -6,8 +6,8 @@ title: Harshvardhan Singh # the website title (if blank, full name will be used 
 first_name: Harshvardhan Singh
 middle_name: 
 last_name: 
-contact_note: > Feel free to reach out for cybersecurity collaboration, research discussions, or security consulting opportunities.
-  You can even add a little note about which of these is the best way to reach you.
+contact_note: > 
+Feel free to reach out for cybersecurity collaboration, research discussions, or security consulting opportunities.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   Cybersecurity Consultant specializing in Application Security, VAPT, Secure Architecture, and AI-driven Security Research.
 footer_text: >
