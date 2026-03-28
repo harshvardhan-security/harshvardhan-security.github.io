@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harshvardhan Singh — Security Researcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:    #080b08;
+      --ink2:   #0d110d;
+      --paper:  #111611;
+      --lime:   #c8ff00;
+      --blood:  #ff3c1f;
+      --ghost:  rgba(200,255,0,0.06);
+      --rule:   rgba(200,255,0,0.12);
+      --muted:  #3d4f3d;
+      --dim:    #7a9470;
+      --light:  #c2d9b8;
+      --white:  #eef4e8;
+      --f-impact: 'Bebas Neue', sans-serif;
+      --f-serif:  'DM Serif Display', serif;
+      --f-ui:     'Syne', sans-serif;
+      --f-mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--ink);
+      color: var(--light);
+      font-family: var(--f-ui);
+      overflow-x: hidden;
+    }
+
+    /* SCANLINES */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px);
+      pointer-events: none; z-index: 9990;
+    }
+
+    /* GRAIN */
+    #grain {
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9989; opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4vw; height: 62px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(8,11,8,0.96);
+      backdrop-filter: blur(14px);
+    }
+    .nav-wordmark {
+      font-family: var(--f-impact);
+      font-size: 1.35rem;
+      letter-spacing: 0.14em;
+      color: var(--lime);
+      text-decoration: none;
+    }
+    .nav-wordmark em { color: var(--blood); font-style: normal; }
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--f-mono);
+      font-size: 0.63rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px; background: var(--lime);
+      transition: width .25s ease;
+    }
+    .nav-links a:hover { color: var(--lime); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-pill {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--lime);
+      padding: 0.35rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+    }
+    .nav-pill::before {
+      content: ''; width: 5px; height: 5px;
+      background: var(--ink); border-radius: 50%;
+      animation: blink 1.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      padding: 110px 4vw 80px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6rem;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: 'SEC';
+      position: absolute; right: -1vw; top: 6vh;
+      font-family: var(--f-impact);
+      font-size: clamp(16rem, 26vw, 32rem);
+      line-height: 1; color: transparent;
+      -webkit-text-stroke: 1px rgba(200,255,0,0.04);
+      pointer-events: none; user-select: none;
+    }
+
+    .hero-left { position: relative; z-index: 2; }
+    .hero-eyebrow {
+      font-family: var(--f-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 1.2rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 48px; height: 1px; background: var(--lime); }
+
+    .hero-name {
+      font-family: var(--f-impact);
+      font-size: clamp(4rem, 10vw, 11rem);
+      line-height: 0.88;
+      letter-spacing: 0.01em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+    .hero-name .accent { color: var(--lime); }
+    .hero-name .surname {
+      font-family: var(--f-serif);
+      font-style: italic;
+      font-size: clamp(2rem, 4.5vw, 5rem);
+      color: var(--dim);
+      display: block;
+      margin-top: 0.05em;
+      text-transform: none;
+    }
+
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      align-items: end;
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+    .hero-desc { font-size: 1rem; line-height: 1.8; color: var(--dim); }
+    .hero-desc strong { color: var(--light); }
+    .hero-metrics { display: flex; gap: 2.5rem; justify-content: center; }
+    .metric { text-align: center; }
+    .metric-val {
+      font-family: var(--f-impact);
+      font-size: 3.2rem; line-height: 1;
+      color: var(--lime); display: block;
+    }
+    .metric-label {
+      font-family: var(--f-mono);
+      font-size: 0.56rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--muted);
+      margin-top: 0.3rem; display: block;
+    }
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+
+    /* BUTTONS */
+    .btn-lime, .btn-ghost {
+      font-family: var(--f-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      display: inline-block;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-lime { background: var(--lime); color: var(--ink); }
+    .btn-lime::before { content:''; position:absolute; inset:0; background:var(--blood); transform:translateX(-101%); transition:transform .3s ease; }
+    .btn-lime:hover::before { transform:translateX(0); }
+    .btn-lime:hover { color: var(--white); }
+    .btn-lime span, .btn-ghost span { position:relative; z-index:1; }
+    .btn-ghost { background:transparent; color:var(--dim); border:1px solid var(--muted); }
+    .btn-ghost::before { content:''; position:absolute; inset:0; background:var(--ghost); transform:translateX(-101%); transition:transform .3s ease; }
+    .btn-ghost:hover::before { transform:translateX(0); }
+    .btn-ghost:hover { color:var(--lime); border-color:var(--lime); }
+
+    /* HERO PHOTO */
+    .hero-photo-wrap {
+      position: relative; z-index: 2;
+      flex-shrink: 0;
+    }
+    .hero-photo-frame {
+      width: clamp(220px, 22vw, 340px);
+      aspect-ratio: 3/4;
+      position: relative;
+    }
+    .hero-photo-frame::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--lime) 0%, transparent 50%, var(--blood) 100%);
+      z-index: 0;
+    }
+    .hero-photo-frame::after {
+      content: '';
+      position: absolute;
+      top: 12px; left: 12px; right: -12px; bottom: -12px;
+      border: 1px solid rgba(200,255,0,0.2);
+      z-index: -1;
+    }
+    .hero-photo-inner {
+      position: absolute; inset: 2px;
+      background: var(--paper);
+      overflow: hidden;
+      z-index: 1;
+    }
+    /* Replace src="C:\Users\Admin\Downloads\profile.jpg" with your actual photo */
+    .hero-photo-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: grayscale(20%) contrast(1.05);
+    }
+    /* Fallback avatar shown when no image loaded */
+    .hero-photo-inner .avatar-fallback {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem;
+      background: linear-gradient(160deg, #0f1e0f 0%, #1a2d1a 100%);
+    }
+    .avatar-fallback svg { opacity: 0.5; }
+    .avatar-fallback span {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .photo-tag {
+      position: absolute;
+      bottom: -14px; left: -14px;
+      background: var(--blood);
+      color: var(--white);
+      font-family: var(--f-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      z-index: 3;
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--f-mono); font-size: 0.56rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted);
+      display: flex; flex-direction: column; align-items: center; gap: 0.7rem;
+    }
+    .scroll-hint::after {
+      content: ''; width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--lime), transparent);
+      animation: drip 2s ease-in-out infinite;
+    }
+    @keyframes drip { 0%,100%{opacity:1;transform:scaleY(1)} 50%{opacity:.4;transform:scaleY(.5)} }
+
+    /* ── SECTION SCAFFOLDING ── */
+    .s { position: relative; z-index: 10; }
+    .s-header {
+      display: flex; align-items: baseline; gap: 2rem;
+      margin-bottom: 4rem; padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .s-num { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.2em; color:var(--lime); opacity:.7; }
+    .s-title {
+      font-family: var(--f-impact);
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--white); line-height: 1;
+    }
+    .s-title em { font-family:var(--f-serif); font-style:italic; color:var(--lime); }
+    .s-line { flex:1; height:1px; background:var(--rule); }
+
+    /* ── ABOUT ── */
+    #about { padding: 120px 4vw; background: var(--ink2); }
+    .about-layout { display: grid; grid-template-columns: 5fr 4fr; gap: 7rem; align-items: start; }
+    .about-pull {
+      font-family: var(--f-serif); font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+      font-style: italic; color: var(--white); line-height: 1.4;
+      margin-bottom: 2.2rem;
+      border-left: 3px solid var(--lime); padding-left: 1.8rem;
+    }
+    .about-body p { font-size: 0.95rem; line-height: 1.7; max-width: 650px; color: var(--dim); margin-bottom: 1.1rem; }
+    .about-body p strong { color: var(--light); }
+
+    .identity-card { background: var(--paper); border: 1px solid var(--rule); padding: 2rem; }
+    .identity-card-header {
+      display: flex; align-items: center; gap: 0.7rem;
+      margin-bottom: 1.8rem; padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .icard-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .icard-dot:nth-child(1) { background: var(--blood); }
+    .icard-dot:nth-child(2) { background: var(--lime); opacity:.5; }
+    .icard-dot:nth-child(3) { background: var(--lime); opacity:.2; }
+    .icard-title { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-left:auto; }
+    .id-row { display:flex; justify-content:space-between; align-items:baseline; padding:0.6rem 0; border-bottom:1px solid rgba(200,255,0,0.04); }
+    .id-key { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+    .id-val { color:var(--light); font-weight:500; font-size:0.9rem; text-align:right; }
+    .id-val.ok { color:var(--lime); }
+    .id-val.hot { color:var(--blood); }
+    .collab-bar {
+      margin-top: 1.5rem; padding: 1rem;
+      background: rgba(200,255,0,0.05);
+      border: 1px solid rgba(200,255,0,0.15);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .collab-bar::before {
+      content: ''; width: 7px; height: 7px;
+      background: var(--lime); border-radius: 50%;
+      animation: pulse-lime 2s infinite; flex-shrink: 0;
+    }
+    @keyframes pulse-lime { 0%,100%{box-shadow:0 0 0 0 rgba(200,255,0,.4)} 50%{box-shadow:0 0 0 8px rgba(200,255,0,0)} }
+    .collab-text { font-family:var(--f-mono); font-size:0.63rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--lime); }
+
+    /* ── EXPERIENCE ── */
+    #experience { padding: 120px 4vw; }
+    .exp-intro {
+      max-width: 720px;
+      font-family: var(--f-serif); font-style: italic;
+      font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+      color: var(--white); line-height: 1.5;
+      margin-bottom: 4rem;
+      opacity: 0.9;
+    }
+
+    .exp-disclaimer {
+      font-family: var(--f-mono); font-size: 0.62rem;
+      letter-spacing: 0.1em; color: var(--muted);
+      border-left: 2px solid var(--blood);
+      padding: 0.6rem 1rem;
+      margin-bottom: 3rem;
+      background: rgba(255,60,31,0.04);
+    }
+
+    .engagements-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      margin-bottom: 3rem;
+    }
+    .eng-cell {
+      background: var(--ink);
+      padding: 2rem 1.8rem;
+      position: relative; overflow: hidden;
+      transition: background .3s;
+    }
+    .eng-cell::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; width: 100%; height: 0;
+      background: linear-gradient(180deg, rgba(200,255,0,0.04) 0%, transparent 100%);
+      transition: height .4s ease;
+    }
+    .eng-cell:hover { background: var(--paper); }
+    .eng-cell:hover::before { height: 100%; }
+    .eng-cat {
+      font-family: var(--f-mono); font-size: 0.58rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--lime); opacity: 0.7; margin-bottom: 0.8rem;
+    }
+    .eng-title {
+      font-family: var(--f-impact); font-size: 1.5rem;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 1rem; line-height: 1.1;
+    }
+    .eng-points { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .eng-points li {
+      font-family: var(--f-mono); font-size: 0.62rem;
+      letter-spacing: 0.06em; color: var(--muted);
+      padding-left: 1.2rem; position: relative;
+    }
+    .eng-points li::before { content: '→'; position: absolute; left: 0; color: var(--lime); font-size: 0.58rem; }
+
+    /* Reviews row */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .rev-cell {
+      background: var(--ink); padding: 1.5rem 1.4rem;
+      transition: background .3s;
+      position: relative; overflow: hidden;
+    }
+    .rev-cell:hover { background: var(--paper); }
+    .rev-icon { font-size: 1.4rem; margin-bottom: 0.8rem; display: block; }
+    .rev-title {
+      font-family: var(--f-impact); font-size: 1.1rem;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--white); line-height: 1.1; margin-bottom: 0.5rem;
+    }
+    .rev-sub { font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.08em; color: var(--muted); }
+
+    /* ── ACHIEVEMENTS ── */
+    #achievements { padding: 120px 4vw; background: var(--ink2); }
+    .ach-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .ach-card {
+      background: var(--ink);
+      border: 1px solid var(--rule);
+      padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, background .3s;
+    }
+    .ach-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: transparent; transition: background .3s;
+    }
+    .ach-card:hover { background: var(--paper); border-color: rgba(200,255,0,0.25); }
+    .ach-card:hover::before { background: var(--lime); }
+    .ach-card.blood:hover::before { background: var(--blood); }
+    .ach-card.blood { border-color: rgba(255,60,31,0.1); }
+
+    .ach-badge {
+      font-family: var(--f-mono); font-size: 0.58rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.22rem 0.6rem; border: 1px solid;
+      display: inline-block; margin-bottom: 1rem;
+    }
+    .ach-badge.lime { color: var(--lime); border-color: var(--lime); }
+    .ach-badge.blood { color: var(--blood); border-color: var(--blood); }
+    .ach-badge.gold { color: #f5c518; border-color: #f5c518; }
+    .ach-badge.blue { color: #5bc8ff; border-color: #5bc8ff; }
+
+    .ach-title {
+      font-family: var(--f-impact); font-size: 1.3rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 0.6rem; line-height: 1.1;
+    }
+    .ach-body { font-size: 0.88rem; line-height: 1.65; color: var(--muted); }
+    .ach-body strong { color: var(--light); }
+
+    .ach-placeholder {
+      border: 1px dashed rgba(200,255,0,0.15);
+      background: transparent;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; gap: 0.8rem;
+      min-height: 160px;
+    }
+    .ach-placeholder-icon { font-size: 1.5rem; opacity: 0.3; }
+    .ach-placeholder-text {
+      font-family: var(--f-mono); font-size: 0.62rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── PROJECTS ── */
+    #projects { padding: 120px 4vw; }
+    .projects-list { display: flex; flex-direction: column; }
+    .proj-row {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      gap: 3rem;
+      padding: 2.2rem 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+    }
+    .proj-row::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--ghost);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .35s ease;
+    }
+    .proj-row:hover::before { transform: scaleX(1); }
+    .proj-num { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.16em; color:var(--muted); position:relative; z-index:1; }
+    .proj-info { position: relative; z-index: 1; }
+    .proj-type { font-family:var(--f-mono); font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--lime); opacity:.7; margin-bottom:0.4rem; }
+    .proj-name { font-family:var(--f-impact); font-size:clamp(1.3rem,2.2vw,1.9rem); letter-spacing:0.04em; text-transform:uppercase; color:var(--white); margin-bottom:0.4rem; transition:color .2s; }
+    .proj-row:hover .proj-name { color: var(--lime); }
+    .proj-desc { font-size:0.88rem; color:var(--muted); line-height:1.5; max-width:580px; }
+    .proj-meta { position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-end; gap:0.7rem; }
+    .proj-tag { font-family:var(--f-mono); font-size:0.58rem; letter-spacing:0.1em; color:var(--muted); }
+    .proj-arrow { font-size:1.2rem; color:var(--muted); transition:transform .2s, color .2s; }
+    .proj-row:hover .proj-arrow { transform:translate(4px,-4px); color:var(--lime); }
+
+    /* ── SERVICES ── */
+    #services { padding: 120px 4vw; background: var(--ink2); }
+    .services-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2px; background:var(--rule); border:1px solid var(--rule); }
+    .svc-card {
+      background: var(--ink); padding: 3rem 2.5rem;
+      position: relative; overflow: hidden; transition: background .3s;
+    }
+    .svc-card:hover { background: var(--paper); }
+    .svc-card::after {
+      content: attr(data-num); position: absolute;
+      bottom: -1rem; right: 1.5rem;
+      font-family: var(--f-impact); font-size: 7rem;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(200,255,0,0.04);
+      pointer-events: none; line-height: 1;
+      transition: -webkit-text-stroke .3s;
+    }
+    .svc-card:hover::after { -webkit-text-stroke-color: rgba(200,255,0,0.09); }
+    .svc-icon { font-size: 1.7rem; margin-bottom: 1.4rem; display: block; }
+    .svc-name { font-family:var(--f-impact); font-size:1.7rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--white); margin-bottom:0.9rem; line-height:1; }
+    .svc-desc { font-size:0.9rem; line-height:1.75; color:var(--dim); margin-bottom:1.4rem; }
+    .svc-list { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .svc-list li { font-family:var(--f-mono); font-size:0.63rem; letter-spacing:0.07em; color:var(--muted); padding-left:1.2rem; position:relative; }
+    .svc-list li::before { content:'→'; position:absolute; left:0; color:var(--lime); font-size:0.58rem; }
+
+    /* ── BLOG ── */
+    #blog { padding: 120px 4vw; }
+    .blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+    .blog-card {
+      background: var(--ink); border: 1px solid var(--rule);
+      padding: 2rem; display: flex; flex-direction: column;
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, background .3s;
+    }
+    .blog-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:transparent; transition:background .3s; }
+    .blog-card:hover { background: var(--paper); border-color: rgba(200,255,0,0.25); }
+    .blog-card:hover::before { background: var(--lime); }
+    .blog-cat { font-family:var(--f-mono); font-size:0.57rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--lime); margin-bottom:1rem; opacity:.8; }
+    .blog-title { font-family:var(--f-serif); font-size:1.2rem; font-style:italic; color:var(--white); line-height:1.35; margin-bottom:1rem; flex:1; transition:color .2s; }
+    .blog-card:hover .blog-title { color: var(--lime); }
+    .blog-meta { font-family:var(--f-mono); font-size:0.58rem; letter-spacing:0.1em; color:var(--muted); display:flex; justify-content:space-between; padding-top:1rem; border-top:1px solid var(--rule); }
+    .blog-card.featured { grid-column:span 2; background:var(--paper); border-color:rgba(200,255,0,0.15); display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:end; }
+    .blog-card.featured .blog-title { font-size:1.8rem; }
+    .blog-card.featured .blog-cat { color: var(--blood); }
+    .blog-feat-num { font-family:var(--f-impact); font-size:5.5rem; color:transparent; -webkit-text-stroke:1px rgba(200,255,0,0.1); line-height:1; align-self:start; }
+
+    /* ── CONTACT ── */
+    #contact { padding: 120px 4vw 80px; background: var(--ink2); }
+    .contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:8rem; align-items:start; }
+    .contact-headline { font-family:var(--f-impact); font-size:clamp(2.5rem,6vw,5.5rem); line-height:0.9; text-transform:uppercase; color:var(--white); margin-bottom:2rem; }
+    .contact-headline span { color: var(--lime); }
+    .contact-subtext { font-size:1rem; line-height:1.8; color:var(--dim); margin-bottom:3rem; max-width:380px; }
+    .contact-channels { display:flex; flex-direction:column; gap:0; }
+    .channel {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.2rem 0; border-bottom:1px solid var(--rule);
+      text-decoration:none; color:inherit;
+      transition: padding-left .25s;
+    }
+    .channel:hover { padding-left: 0.8rem; }
+    .channel-name { font-family:var(--f-mono); font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); transition:color .2s; }
+    .channel:hover .channel-name { color: var(--lime); }
+    .channel-val { font-size:0.92rem; color:var(--light); font-weight:500; transition:color .2s; }
+    .channel:hover .channel-val { color: var(--lime); }
+    .cf { display:flex; flex-direction:column; gap:1.2rem; }
+    .cf-group label { display:block; font-family:var(--f-mono); font-size:0.59rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
+    .cf-group input, .cf-group textarea, .cf-group select {
+      width:100%; background:var(--paper); border:1px solid var(--rule);
+      border-bottom-color:var(--muted); color:var(--light);
+      font-family:var(--f-mono); font-size:0.8rem; padding:0.9rem 1rem;
+      outline:none; resize:none; appearance:none;
+      transition: border-color .25s, background .25s;
+    }
+    .cf-group input:focus, .cf-group textarea:focus, .cf-group select:focus { border-color:var(--lime); background:rgba(200,255,0,0.025); }
+    .cf-group textarea { min-height:130px; }
+    .cf-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .cf-submit {
+      font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.2em;
+      text-transform:uppercase; background:var(--lime); color:var(--ink);
+      border:none; padding:1.1rem 2.5rem; width:100%;
+      position:relative; overflow:hidden; transition:all .25s;
+    }
+    .cf-submit::before { content:''; position:absolute; inset:0; background:var(--blood); transform:translateX(-101%); transition:transform .3s ease; }
+    .cf-submit:hover::before { transform:translateX(0); }
+    .cf-submit span { position:relative; z-index:1; }
+    .cf-submit:hover span { color:var(--white); }
+
+    /* FOOTER */
+    footer {
+      position:relative; z-index:10; padding:2rem 4vw;
+      border-top:1px solid var(--rule);
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--ink);
+    }
+    .f-left { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.12em; color:var(--muted); }
+    .f-left span { color:var(--lime); }
+    .f-right { display:flex; gap:2.5rem; }
+    .f-right a { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .2s; }
+    .f-right a:hover { color:var(--lime); }
+
+    /* REVEAL */
+    .reveal { opacity:1; transform:translateY(28px); transition:opacity .75s ease, transform .75s ease; }
+    .reveal.in { opacity:1; transform:translateY(0); }
+    .reveal-l { opacity:1; transform:translateX(-28px); transition:opacity .75s ease, transform .75s ease; }
+    .reveal-l.in { opacity:1; transform:translateX(0); }
+    .reveal-r { opacity:1; transform:translateX(28px); transition:opacity .75s ease, transform .75s ease; }
+    .reveal-r.in { opacity:1; transform:translateX(0); }
+    .d1{transition-delay:.06s}.d2{transition-delay:.13s}.d3{transition-delay:.2s}
+    .d4{transition-delay:.27s}.d5{transition-delay:.34s}.d6{transition-delay:.41s}
+
+    /* RESPONSIVE */
+    @media(max-width:1100px) {
+      #hero { grid-template-columns:1fr; }
+      .hero-photo-wrap { display:none; }
+      .about-layout { grid-template-columns:1fr; gap:4rem; }
+      .engagements-grid { grid-template-columns:repeat(2,1fr); }
+      .reviews-grid { grid-template-columns:repeat(2,1fr); }
+      .ach-grid { grid-template-columns:repeat(2,1fr); }
+      .services-grid { grid-template-columns:1fr; }
+      .blog-grid { grid-template-columns:1fr; }
+      .blog-card.featured { grid-column:span 1; display:flex; flex-direction:column; }
+      .contact-layout { grid-template-columns:1fr; gap:4rem; }
+    }
+    @media(max-width:768px) {
+      .hero-bottom { grid-template-columns:1fr; gap:2rem; }
+      .hero-actions { align-items:flex-start; }
+      .engagements-grid { grid-template-columns:1fr; }
+      .reviews-grid { grid-template-columns:1fr 1fr; }
+      .ach-grid { grid-template-columns:1fr; }
+      .proj-row { grid-template-columns:48px 1fr; }
+      .proj-meta { display:none; }
+      .nav-links { display:none; }
+    }
+  </style>
+</head>
+<body>
+<div id="grain"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a href="#hero" class="nav-wordmark">HVS<em>.</em>SEC</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="https://www.google.com" target="_blank">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-pill">Open to Projects</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero" class="s">
+  <div class="hero-left">
+    <div class="hero-eyebrow">AI Security Researcher &amp; Offensive Security Specialist</div>
+    <h1 class="hero-name">
+      <span class="accent">Harshvardhan</span>
+      <span class="surname">Singh</span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        <strong>India-based security professional</strong> with enterprise consulting experience across web, mobile, API, cloud, and RPA security — certified ISO 42001 Lead Implementer and active security researcher.
+      </p>
+      <div class="hero-metrics">
+        <div class="metric">
+          <span class="metric-val" data-target="0">0</span>
+          <span class="metric-label">Engagements</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" data-target="0">0</span>
+          <span class="metric-label">CTF Solves</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" data-target="0">0</span>
+          <span class="metric-label">Certifications</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-lime"><span>View Experience</span></a>
+        <a href="#contact" class="btn-ghost"><span>Let's Collaborate</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STYLIZED AVATAR — replace with profile.jpg any time by swapping this block -->
+  <div class="hero-photo-wrap">
+    <div class="hero-photo-frame">
+      <div class="hero-photo-inner">
+      <img src="profile.jpg" alt="Harshvardhan Singh">
+    </div>
+    </div>
+    <div class="photo-tag">Security Researcher</div>
+  </div>
+
+  
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="about" class="s">
+  <div class="s-header">
+    <span class="s-num">01</span>
+    <h2 class="s-title">About <em>Me</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="about-layout">
+    <div class="about-left reveal-l">
+      <p class="about-pull">"Focused on understanding systems, identifying risks, and improving security through practical testing."</p>
+      <div class="about-body">
+  <p>I'm <strong>Harshvardhan Singh</strong>, a cybersecurity professional with hands-on experience in application security, API testing, and infrastructure assessments.</p>
+  <p>I have worked on web applications, APIs, mobile platforms, and cloud environments, identifying security issues and supporting teams with clear and practical remediation steps.</p>
+  <p>My work also includes security reviews such as process assessments, database reviews, and basic cloud configuration analysis, helping improve overall security posture.</p>
+  <p>I focus on building a strong foundation in offensive security while continuously learning and improving through practice, labs, and real-world scenarios.</p>
+  <p>My goal is to contribute to building secure systems by identifying issues early and supporting effective fixes.</p>
+</div>
+    </div>
+    <div class="about-right reveal-r">
+      <div class="identity-card">
+        <div class="identity-card-header">
+          <span class="icard-dot"></span><span class="icard-dot"></span><span class="icard-dot"></span>
+          <span class="icard-title">identity.json</span>
+        </div>
+        <div class="id-row"><span class="id-key">Name</span><span class="id-val">Harshvardhan Singh</span></div>
+        <div class="id-row"><span class="id-key">Role</span><span class="id-val">Security Researcher</span></div>
+        <div class="id-row"><span class="id-key">Location</span><span class="id-val">India 🇮🇳</span></div>
+        <div class="id-row"><span class="id-key">Background</span><span class="id-val">Cybersecurity Consulting</span></div>
+        <div class="id-row"><span class="id-key">Focus</span><span class="id-val">Offensive &amp; Advisory</span></div>
+        
+        
+        <div class="id-row"><span class="id-key">Bug Bounty</span><span class="id-val ok">Active</span></div>
+        <div class="id-row"><span class="id-key">Focus</span><span class="id-val">Continuous learning & improvement</span></div>
+        <div class="collab-bar">
+          <span class="collab-text">Open to collaborations &amp; new ventures</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EXPERIENCE ══ -->
+<section id="experience" class="s">
+  <div class="s-header">
+    <span class="s-num">02</span>
+    <h2 class="s-title">Professional <em>Experience</em></h2>
+    <div class="s-line"></div>
+  </div>
+
+  <p class="exp-intro reveal">Across professional consulting engagements, I delivered security assessments for enterprise clients  — operating under rigorous confidentiality standards while driving measurable security uplift.</p>
+
+  <div class="exp-disclaimer reveal">
+    ⚠ All engagements were conducted under strict NDAs. Client names, industries, and specific findings remain confidential in accordance with professional obligations.
+  </div>
+
+  <!-- Testing Engagements -->
+  <div style="margin-bottom:1rem;">
+    <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime);margin-bottom:1rem;opacity:0.8;">// Testing &amp; Assessment Engagements</div>
+  </div>
+  <div class="engagements-grid" style="margin-bottom:3rem;">
+    <div class="eng-cell reveal d1">
+      <div class="eng-cat">01 / API Security</div>
+      <div class="eng-title">API Security Testing</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Conducted in-depth security assessments of REST and GraphQL APIs for enterprise platforms, identifying critical flaws in authentication flows, object-level access controls, and data exposure — translating findings into prioritised, developer-ready remediation guidance.</p>
+      <ul class="eng-points">
+        <li>REST &amp; GraphQL API assessment</li>
+        <li>Broken Object Level Access Control (BOLA)</li>
+        <li>Authentication &amp; authorisation bypass</li>
+        <li>Injection, mass assignment &amp; rate limiting</li>
+        <li>OWASP API Top 10 coverage</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d2">
+      <div class="eng-cat">02 / Web Application</div>
+      <div class="eng-title">Web Application Testing</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Delivered black-box, grey-box, and white-box web application penetration tests for client-facing and internal platforms, uncovering vulnerabilities ranging from injection flaws to complex business logic issues that automated scanners cannot detect.</p>
+      <ul class="eng-points">
+        <li>OWASP Top 10 vulnerability assessment</li>
+        <li>Authentication bypass &amp; session management</li>
+        <li>Business logic &amp; access control testing</li>
+        <li>Client-side attack surface analysis</li>
+        <li>Detailed, risk-rated remediation reporting</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d3">
+      <div class="eng-cat">03 / Mobile</div>
+      <div class="eng-title">Mobile Application Testing</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Performed comprehensive security testing of Android and iOS applications using both static and dynamic analysis techniques. Assessed apps against OWASP MASVS, uncovering insecure data storage, improper session handling, and client-side bypass vulnerabilities.</p>
+      <ul class="eng-points">
+        <li>Android APK &amp; iOS IPA static analysis</li>
+        <li>Dynamic instrumentation with Frida &amp; Objection</li>
+        <li>Insecure data storage &amp; transmission</li>
+        <li>Certificate pinning bypass &amp; traffic interception</li>
+        <li>OWASP MASVS compliance assessment</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d4">
+      <div class="eng-cat">04 / RPA Security</div>
+      <div class="eng-title">Robotic Process Automation Assessment</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Assessed security postures of enterprise RPA deployments — an often-overlooked attack surface where bots hold elevated credentials and access to critical business processes. Evaluated platforms including SheetKraft, Automation Anywhere, and Automation Edge for access control, credential management, and workflow integrity risks.</p>
+      <ul class="eng-points">
+        <li>SheetKraft platform security assessment</li>
+        <li>Automation Anywhere security review</li>
+        <li>Automation Edge configuration analysis</li>
+        <li>Bot credential &amp; privilege management</li>
+        <li>Workflow logic integrity &amp; audit trail review</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d5">
+      <div class="eng-cat">05 / Cloud</div>
+      <div class="eng-title">Cloud Security Review</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Reviewed cloud security configurations for enterprise AWS and Azure environments, benchmarking against CIS Foundations and NIST frameworks. Identified critical IAM privilege escalation paths, exposed storage resources, and logging gaps that left environments vulnerable to lateral movement and data exfiltration.</p>
+      <ul class="eng-points">
+        <li>AWS &amp; Azure configuration review</li>
+        <li>IAM privilege analysis &amp; least-privilege assessment</li>
+        <li>Storage, network &amp; logging misconfiguration</li>
+        <li>CIS Benchmarks &amp; NIST compliance mapping</li>
+        <li>Security posture scorecard reporting</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d6">
+      <div class="eng-cat">06 / Forensics</div>
+      <div class="eng-title">Digital Forensic Readiness Review</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Assessed organisations' preparedness to respond to and investigate security incidents from a digital forensics standpoint — covering log integrity, evidence preservation practices, chain-of-custody procedures, and awareness training to ensure teams can act decisively when an incident occurs.</p>
+      <ul class="eng-points">
+        <li>Forensic readiness maturity assessment</li>
+        <li>Log retention strategy &amp; integrity review</li>
+        <li>Chain of custody &amp; evidence preservation</li>
+        <li>Incident response readiness evaluation</li>
+        <li>Staff awareness programme design</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Reviews & Audits -->
+  <div style="margin-bottom:1rem;">
+    <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime);margin-bottom:1rem;opacity:0.8;">// Reviews &amp; Audits Delivered</div>
+  </div>
+  <div class="reviews-grid">
+    <div class="rev-cell reveal d1">
+      <span class="rev-icon">🔥</span>
+      <div class="rev-title">Firewall Review</div>
+      <div class="rev-sub" style="margin-bottom:0.8rem;">Rule base analysis · Policy gap review · Segmentation validation</div>
+      <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);">Reviewed enterprise firewall rule bases for redundant, overly permissive, and shadowed rules — identifying lateral movement risks and network segmentation gaps across perimeter and internal zones.</p>
+    </div>
+    <div class="rev-cell reveal d2">
+      <span class="rev-icon">⚙️</span>
+      <div class="rev-title">Process Review</div>
+      <div class="rev-sub" style="margin-bottom:0.8rem;">Security process maturity · Control effectiveness · Gap analysis</div>
+      <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);">Evaluated security process maturity across change management, access provisioning, patch management, and incident handling — benchmarking against industry frameworks and delivering actionable control improvement roadmaps.</p>
+    </div>
+    <div class="rev-cell reveal d3">
+      <span class="rev-icon">🤝</span>
+      <div class="rev-title">Third Party Review</div>
+      <div class="rev-sub" style="margin-bottom:0.8rem;">Vendor risk assessment · Supply chain security · Contractual controls</div>
+      <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);">Assessed vendor and third-party security postures through questionnaire review, evidence validation, and contractual analysis — helping organisations understand inherited risk from their supply chain and technology partners.</p>
+    </div>
+    <div class="rev-cell reveal d4">
+      <span class="rev-icon">🗄️</span>
+      <div class="rev-title">Database Review</div>
+      <div class="rev-sub" style="margin-bottom:0.8rem;">DB access controls · Encryption review · Audit logging validation</div>
+      <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);">Reviewed database security configurations covering access controls, service account privileges, encryption at rest and in transit, audit logging completeness, and sensitive data exposure — across SQL and NoSQL environments.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ACHIEVEMENTS ══ -->
+<section id="achievements" class="s">
+  <div class="s-header">
+    <span class="s-num">03</span>
+    <h2 class="s-title">Achievements <em>&amp; Certs</em></h2>
+    <div class="s-line"></div>
+  </div>
+
+  <div class="ach-grid">
+    <!-- ISO 42001 Certification — TÜV SÜD -->
+    <div class="ach-card reveal d1">
+      <span class="ach-badge blue">Certification</span>
+      <div class="ach-title">ISO 42001 Lead Implementer</div>
+      <div class="ach-body">Certified <strong>ISO/IEC 42001 Lead Implementer</strong> by TÜV SÜD — one of the world's most respected technical certification and testing organisations. ISO 42001 is the international standard for AI Management Systems, covering responsible AI governance, risk management, and ethical deployment of artificial intelligence across organisations. This certification demonstrates expertise in designing, implementing, and continuously improving an AI management framework aligned to global best practices — a rare and forward-looking credential in the security and technology space.</div>
+    </div>
+
+    <!-- Bug Bounty -->
+    <div class="ach-card reveal d2">
+      <span class="ach-badge lime">Bug Bounty</span>
+      <div class="ach-title">Vulnerability Disclosures</div>
+      <div class="ach-body">Discovered and responsibly disclosed critical and high-severity vulnerabilities on live production platforms through bug bounty programmes. Notable findings include an <strong>Insecure Direct Object Reference (IDOR) leading to full account takeover</strong>, a <strong>Blind SSRF via PDF generation</strong> that exposed AWS instance metadata credentials, and authentication bypass chains affecting real user accounts. All findings were reported through responsible disclosure channels and patched by vendors.</div>
+    </div>
+
+    <!-- CTF -->
+    <div class="ach-card reveal d3">
+      <span class="ach-badge gold">CTF</span>
+      <div class="ach-title">CTF Competitions</div>
+      <div class="ach-body">Solved <strong>120+ challenges</strong> across HackTheBox, TryHackMe, and open CTF competitions. Consistently active across categories including Web Exploitation, Binary Exploitation (Pwn), Cryptography, Reverse Engineering, and OSINT. CTF competition sharpens real offensive instincts — the ability to think creatively under time pressure and chain multiple vulnerabilities into complete exploits is a direct skill transfer to professional engagements.</div>
+    </div>
+
+    <!-- CVE Research — pending -->
+    <div class="ach-card blood reveal d4">
+      <span class="ach-badge blood">CVE — In Progress</span>
+      <div class="ach-title">Independent Vulnerability Research</div>
+      <div class="ach-body">Actively conducting independent security research targeting real-world software, with responsible disclosure submissions in progress. CVE assignments and full details will be published here upon official <strong>MITRE CVE assignment</strong> and vendor confirmation. Research spans web applications, open-source tooling, and enterprise software components. <strong>Watch this space.</strong></div>
+    </div>
+
+    <!-- Consulting track record -->
+    <div class="ach-card reveal d5">
+      <span class="ach-badge gold">Track Record</span>
+      <div class="ach-title">Professional Consulting Experience</div>
+      <div class="ach-body">Delivered <strong>50+ security engagements</strong> across enterprise clients through a professional consulting practice — spanning penetration testing, advisory reviews, cloud assessments, and forensic readiness work. Consistently recognised for technical rigour, clear risk communication, and actionable remediation reporting. Each engagement conducted under strict NDA and professional ethical standards.</div>
+    </div>
+
+    <!-- AI Governance specialisation -->
+    <div class="ach-card reveal d6">
+      <span class="ach-badge blue">Specialisation</span>
+      <div class="ach-title">AI Security &amp; Governance</div>
+      <div class="ach-body">Combining a cybersecurity foundation with ISO 42001 Lead Implementer certification creates a rare dual capability: the ability to both <strong>attack AI-powered systems</strong> and <strong>design governance frameworks</strong> that make them trustworthy. As organisations adopt AI at scale, the intersection of security and AI governance is becoming one of the most critical and underserved areas in enterprise risk management.</div>
+    </div>
+
+    <!-- Placeholders for future -->
+    <div class="ach-card ach-placeholder reveal">
+      <span class="ach-placeholder-icon">＋</span>
+      <span class="ach-placeholder-text">Hall of fame listing,<br/>CVE number, or publication</span>
+    </div>
+
+    <div class="ach-card ach-placeholder reveal d1">
+      <span class="ach-placeholder-icon">＋</span>
+      <span class="ach-placeholder-text">Additional certification<br/>or speaking engagement</span>
+    </div>
+
+    <div class="ach-card ach-placeholder reveal d2">
+      <span class="ach-placeholder-icon">＋</span>
+      <span class="ach-placeholder-text">Community award or<br/>open-source contribution</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROJECTS ══ -->
+<section id="projects" class="s">
+  <div class="s-header">
+    <span class="s-num">04</span>
+    <h2 class="s-title">Personal <em>Projects</em></h2>
+    <div class="s-line"></div>
+  </div>
+
+  <div class="projects-list">
+    <a href="https://github.com/harshvardhan-security" class="proj-row reveal" target="_blank">
+      <span class="proj-num">001</span>
+      <div class="proj-info">
+        <div class="proj-type">// Automation Tool</div>
+        <div class="proj-name">AutoRecon Suite</div>
+        <p class="proj-desc">Automated reconnaissance framework chaining Nmap, Gobuster, Nikto, and FFUF to deliver comprehensive target mapping with a single command. Cuts recon time by 80%.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">Python · Bash · Docker</span></div><span class="proj-arrow">↗</span></div>
+    </a>
+    <a href="https://github.com/harshvardhan-security" class="proj-row reveal d1" target="_blank">
+      <span class="proj-num">002</span>
+      <div class="proj-info">
+        <div class="proj-type">// Security Research</div>
+        <div class="proj-name">CVE Research &amp; PoC Log</div>
+        <p class="proj-desc">Documented vulnerability research with working proof-of-concepts, root-cause analysis, and coordinated disclosure reports across web and network software.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">Exploit Dev · Disclosure</span></div><span class="proj-arrow">↗</span></div>
+    </a>
+    <a href="https://github.com/harshvardhan-security" class="proj-row reveal d2" target="_blank">
+      <span class="proj-num">003</span>
+      <div class="proj-info">
+        <div class="proj-type">// Evasion Toolkit</div>
+        <div class="proj-name">WAF Bypass Toolkit</div>
+        <p class="proj-desc">Library of WAF fingerprinting and bypass techniques covering encoding mutations, HTTP smuggling, and header injection for authorized pentest engagements.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">Python · JavaScript</span></div><span class="proj-arrow">↗</span></div>
+    </a>
+    <a href="https://github.com/harshvardhan-security" class="proj-row reveal d3" target="_blank">
+      <span class="proj-num">004</span>
+      <div class="proj-info">
+        <div class="proj-type">// Red Team</div>
+        <div class="proj-name">AD Attack Playbook</div>
+        <p class="proj-desc">Full Active Directory attack chain from initial compromise to domain admin — Kerberoasting, ASREP roasting, DCSync, BloodHound analysis, and credential harvesting.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">PowerShell · C# · Impacket</span></div><span class="proj-arrow">↗</span></div>
+    </a>
+    <a href="https://github.com/harshvardhan-security" class="proj-row reveal d4" target="_blank">
+      <span class="proj-num">005</span>
+      <div class="proj-info">
+        <div class="proj-type">// OSINT</div>
+        <div class="proj-name">Social Recon Engine</div>
+        <p class="proj-desc">OSINT aggregation tool correlating LinkedIn, GitHub, DNS, and social media to build detailed target profiles for authorized social engineering assessments.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">Python · APIs</span></div><span class="proj-arrow">↗</span></div>
+    </a>
+    <a href="https://github.com/harshvardhan-security" class="proj-row reveal d5" target="_blank">
+      <span class="proj-num">006</span>
+      <div class="proj-info">
+        <div class="proj-type">// Malware Analysis</div>
+        <div class="proj-name">Malware Analysis Lab</div>
+        <p class="proj-desc">Isolated sandboxed environment for static and dynamic malware analysis. Behavior logging, network traffic capture, YARA rule generation, and detailed IOC extraction.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">Python · YARA · Cuckoo</span></div><span class="proj-arrow">↗</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section id="services" class="s">
+  <div class="s-header">
+    <span class="s-num">05</span>
+    <h2 class="s-title">My <em>Services</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="services-grid">
+    <div class="svc-card reveal" data-num="01">
+      <span class="svc-icon">🔍</span>
+      <div class="svc-name">Web &amp; API Pentesting</div>
+      <p class="svc-desc">Comprehensive black-box, grey-box, and white-box assessments of web applications and REST/GraphQL APIs. Every test goes beyond automated scanning — I manually hunt for business logic flaws, broken access controls, and chained vulnerabilities that tools miss. Deliverables include a risk-rated findings report with developer-ready remediation steps and an executive summary for leadership.</p>
+      <ul class="svc-list">
+        <li>OWASP Top 10 &amp; API Top 10 full coverage</li>
+        <li>Authentication, authorisation &amp; session testing</li>
+        <li>Business logic &amp; access control bypass</li>
+        <li>Remediation-focused, clearly written reports</li>
+      </ul>
+    </div>
+    <div class="svc-card reveal d1" data-num="02">
+      <span class="svc-icon">📱</span>
+      <div class="svc-name">Mobile App Testing</div>
+      <p class="svc-desc">Full-spectrum Android and iOS application security testing benchmarked against OWASP MASVS. I combine static analysis of the application binary with dynamic runtime testing using Frida and Objection — examining how the app stores data, handles authentication, communicates over the network, and responds to runtime manipulation. Both platforms, one thorough assessment.</p>
+      <ul class="svc-list">
+        <li>Android APK &amp; iOS IPA static analysis</li>
+        <li>Runtime instrumentation (Frida · Objection)</li>
+        <li>Insecure storage, transmission &amp; data leakage</li>
+        <li>Certificate pinning bypass &amp; traffic interception</li>
+      </ul>
+    </div>
+    <div class="svc-card reveal d2" data-num="03">
+      <span class="svc-icon">☁️</span>
+      <div class="svc-name">Cloud &amp; Infrastructure Review</div>
+      <p class="svc-desc">Security configuration reviews for AWS and Azure environments — assessing IAM policies, network controls, storage exposure, logging coverage, and service-level hardening against CIS Benchmarks and NIST frameworks. I also deliver Firewall Rule Base Reviews, identifying redundant, overly permissive, and shadowed rules that create unnecessary network exposure.</p>
+      <ul class="svc-list">
+        <li>AWS &amp; Azure posture review (CIS / NIST)</li>
+        <li>IAM privilege analysis &amp; least-privilege gaps</li>
+        <li>Firewall rule base &amp; segmentation review</li>
+        <li>Storage, logging &amp; network misconfiguration</li>
+      </ul>
+    </div>
+    <div class="svc-card reveal d3" data-num="04">
+      <span class="svc-icon">📋</span>
+      <div class="svc-name">Security Audit &amp; Advisory</div>
+      <p class="svc-desc">Structured advisory reviews that help organisations understand their risk posture beyond technical vulnerabilities — covering Third Party Risk, Database Security, Process Maturity, Digital Forensic Readiness, and RPA platform security. Each review is tailored to the organisation's environment, producing a prioritised gap analysis and a clear improvement roadmap.</p>
+      <ul class="svc-list">
+        <li>Third-party &amp; vendor risk assessment</li>
+        <li>Database security &amp; access review</li>
+        <li>RPA security assessment (SheetKraft · AA · AE)</li>
+        <li>Digital forensic readiness awareness review</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BLOG ══ -->
+<section id="blog" class="s">
+  <div class="s-header">
+    <span class="s-num">06</span>
+    <h2 class="s-title">Writing <em>&amp; Research</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="blog-grid">
+    <a href="https://www.google.com" target="_blank" class="blog-card featured reveal">
+      <div>
+        <div class="blog-cat">// Featured · Bug Bounty</div>
+        <div class="blog-title">How I Found a Critical IDOR Vulnerability That Led to Full Account Takeover</div>
+        <div class="blog-meta"><span>March 2025</span><span class="blog-read">12 min read</span></div>
+      </div>
+      <div class="blog-feat-num">01</div>
+    </a>
+    <a href="https://www.google.com" target="_blank" class="blog-card reveal d2">
+      <div class="blog-cat">// Research · SSRF</div>
+      <div class="blog-title">Blind SSRF via PDF Generation: From Zero to AWS Metadata Leak</div>
+      <div class="blog-meta"><span>Feb 2025</span><span class="blog-read">9 min read</span></div>
+    </a>
+    <a href="https://www.google.com" target="_blank" class="blog-card reveal d3">
+      <div class="blog-cat">// Deep Dive · RPA Security</div>
+      <div class="blog-title">Why RPA Platforms Are the Overlooked Attack Surface in Enterprise Security</div>
+      <div class="blog-meta"><span>Jan 2025</span><span class="blog-read">10 min read</span></div>
+    </a>
+    <a href="https://www.google.com" target="_blank" class="blog-card reveal d4">
+      <div class="blog-cat">// Tutorial · Mobile Security</div>
+      <div class="blog-title">Android Penetration Testing in 2025: A Practical Walkthrough with Frida</div>
+      <div class="blog-meta"><span>Dec 2024</span><span class="blog-read">14 min read</span></div>
+    </a>
+    <a href="https://www.google.com" target="_blank" class="blog-card reveal d5">
+      <div class="blog-cat">// Advisory · Cloud</div>
+      <div class="blog-title">The Most Common AWS Misconfigurations I See in Enterprise Environments</div>
+      <div class="blog-meta"><span>Nov 2024</span><span class="blog-read">11 min read</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact" class="s">
+  <div class="s-header">
+    <span class="s-num">07</span>
+    <h2 class="s-title">Get In <em>Touch</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="contact-layout">
+    <div class="reveal-l">
+      <h3 class="contact-headline">Let's<br><span>Build</span><br>Together.</h3>
+      <p class="contact-subtext">Whether it's a penetration test, security audit, advisory engagement, or a collaboration on something bigger — I'm ready. Let's make something secure.</p>
+      <div class="contact-channels">
+        <a href="https://github.com/harshvardhan-security" class="channel" target="_blank">
+          <span class="channel-name">GitHub</span><span class="channel-val">harshvardhan-security</span>
+        </a>
+        <a href="/cdn-cgi/l/email-protection#85ede0e9e9eac5ede4f7f6edf3e4f7e1ede4ebf6ecebe2edabe1e0f3" class="channel">
+          <span class="channel-name">Email</span><span class="channel-val"><span class="__cf_email__" data-cfemail="d5bdb0b9b9ba95bdb4a7a6bda3b4a7b1bdb4bba6bcbbb2bdfbb1b0a3">harshvardhan.singh.sec@gmail.com</span></span>
+        </a>
+        <a href="https://www.linkedin.com/in/harshvardhan-singh-354b25246/" class="channel" target="_blank">
+          <span class="channel-name">LinkedIn</span><span class="channel-val">/in/harshvardhan-singh</span>
+        </a>
+        <a href="https://twitter.com" class="channel" target="_blank">
+          <span class="channel-name">Twitter / X</span><span class="channel-val">@harshvardhan_sec</span>
+        </a>
+        <a href="https://hackerone.com" class="channel" target="_blank">
+          <span class="channel-name">HackerOne</span><span class="channel-val">View Profile →</span>
+        </a>
+      </div>
+    </div>
+    <div class="reveal-r">
+      <form class="cf" action="https://formspree.io/f/xeepeplj" method="POST" onsubmit="handleSubmit(event)">
+        <div class="cf-row">
+          <div class="cf-group"><label>First Name</label><input type="text" name="name" placeholder="Rajan" required/></div>
+          <div class="cf-group"><label>Last Name</label><input type="text" name="name" placeholder="Mehta"/></div>
+        </div>
+        <div class="cf-group"><label>Email</label><input type="email" name="email" placeholder="rajan@company.com" required/></div>
+        <div class="cf-group">
+          <label>Service Needed</label>
+          <select>
+            <option value="">Select a service...</option>
+            <option>Web Application Penetration Testing</option>
+            <option>API Security Testing</option>
+            <option>Mobile Application Testing (Android / iOS)</option>
+            <option>Cloud Security Review (AWS / Azure)</option>
+            <option>RPA Security Assessment</option>
+            <option>Firewall / DB / Process Review</option>
+            <option>Digital Forensic Readiness Review</option>
+            <option>Third Party / Vendor Risk Review</option>
+            <option>Bug Bounty Program Consulting</option>
+            <option>General Inquiry / Collaboration</option>
+          </select>
+        </div>
+        <div class="cf-group"><label>Message</label><textarea name="message" placeholder="Tell me about your security challenge, scope, or idea..."></textarea></div>
+        <button class="cf-submit" type="submit"><span>Send Message →</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="f-left">© 2025 <span>Harshvardhan Singh</span> — All rights reserved · Built with obsession &amp; purpose</p>
+  <div class="f-right">
+    <a href="https://github.com/harshvardhan-security" target="_blank">GitHub</a>
+    <a href="#hero">Top ↑</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── COUNTER ANIMATION ── */
+function animCount(el, target) {
+  let v = 0;
+  const t = setInterval(() => {
+    v += target / (1600 / 16);
+    if (v >= target) { el.textContent = target + '+'; clearInterval(t); }
+    else el.textContent = Math.floor(v);
+  }, 16);
+}
+let counted = false;
+new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !counted) {
+    counted = true;
+    setTimeout(() => {
+      document.querySelectorAll('.metric-val').forEach(el => {
+        animCount(el, parseInt(el.getAttribute('data-target')));
+      });
+    }, 400);
+  }
+}, { threshold: 0.4 }).observe(document.getElementById('hero'));
+
+/* ── SCROLL REVEAL ── */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.07 });
+document.querySelectorAll('.reveal, .reveal-l, .reveal-r').forEach(el => ro.observe(el));
+
+/* ── NAV ACTIVE ── */
+const secs  = document.querySelectorAll('section[id]');
+const navAs = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  secs.forEach(s => { if (window.scrollY >= s.offsetTop - 90) cur = s.id; });
+  navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--lime)' : ''; });
+}, { passive: true });
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+/* ── FORM ── */
+fun
