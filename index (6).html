@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harshvardhan Singh — Technology Risk &amp; AI Governance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:    #080b08;
+      --ink2:   #0d110d;
+      --paper:  #111611;
+      --lime:   #c8ff00;
+      --blood:  #ff3c1f;
+      --ghost:  rgba(200,255,0,0.06);
+      --rule:   rgba(200,255,0,0.12);
+      --muted:  #3d4f3d;
+      --dim:    #7a9470;
+      --light:  #c2d9b8;
+      --white:  #eef4e8;
+      --f-impact: 'Bebas Neue', sans-serif;
+      --f-serif:  'DM Serif Display', serif;
+      --f-ui:     'Syne', sans-serif;
+      --f-mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--ink);
+      color: var(--light);
+      font-family: var(--f-ui);
+      overflow-x: hidden;
+    }
+
+    /* SCANLINES */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px);
+      pointer-events: none; z-index: 9990;
+    }
+
+    /* GRAIN */
+    #grain {
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9989; opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4vw; height: 62px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(8,11,8,0.96);
+      backdrop-filter: blur(14px);
+    }
+    .nav-wordmark {
+      font-family: var(--f-impact);
+      font-size: 1.35rem;
+      letter-spacing: 0.14em;
+      color: var(--lime);
+      text-decoration: none;
+    }
+    .nav-wordmark em { color: var(--blood); font-style: normal; }
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--f-mono);
+      font-size: 0.63rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px; background: var(--lime);
+      transition: width .25s ease;
+    }
+    .nav-links a:hover { color: var(--lime); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-pill {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--lime);
+      padding: 0.35rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+    }
+    .nav-pill::before {
+      content: ''; width: 5px; height: 5px;
+      background: var(--ink); border-radius: 50%;
+      animation: blink 1.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      padding: 110px 4vw 80px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6rem;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: 'SEC';
+      position: absolute; right: -1vw; top: 6vh;
+      font-family: var(--f-impact);
+      font-size: clamp(8rem, 26vw, 32rem);
+      line-height: 1; color: transparent;
+      -webkit-text-stroke: 1px rgba(200,255,0,0.04);
+      pointer-events: none; user-select: none;
+      overflow: hidden; max-width: 100vw;
+    }
+
+    .hero-left { position: relative; z-index: 2; }
+    .hero-eyebrow {
+      font-family: var(--f-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 1.2rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 48px; height: 1px; background: var(--lime); }
+
+    .hero-name {
+      font-family: var(--f-impact);
+      font-size: clamp(4rem, 10vw, 11rem);
+      line-height: 0.88;
+      letter-spacing: 0.01em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+    .hero-name .accent { color: var(--lime); }
+    .hero-name .surname {
+      font-family: var(--f-serif);
+      font-style: italic;
+      font-size: clamp(2rem, 4.5vw, 5rem);
+      color: var(--dim);
+      display: block;
+      margin-top: 0.05em;
+      text-transform: none;
+    }
+
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      align-items: end;
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+    .hero-desc { font-size: 1rem; line-height: 1.8; color: var(--dim); }
+    .hero-desc strong { color: var(--light); }
+    .hero-metrics { display: flex; gap: 2.5rem; justify-content: center; }
+    .metric { text-align: center; }
+    .metric-val {
+      font-family: var(--f-impact);
+      font-size: 3.2rem; line-height: 1;
+      color: var(--lime); display: block;
+    }
+    .metric-label {
+      font-family: var(--f-mono);
+      font-size: 0.56rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--muted);
+      margin-top: 0.3rem; display: block;
+    }
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+
+    /* BUTTONS */
+    .btn-lime, .btn-ghost {
+      font-family: var(--f-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      display: inline-block;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-lime { background: var(--lime); color: var(--ink); }
+    .btn-lime::before { content:''; position:absolute; inset:0; background:var(--blood); transform:translateX(-101%); transition:transform .3s ease; }
+    .btn-lime:hover::before { transform:translateX(0); }
+    .btn-lime:hover { color: var(--white); }
+    .btn-lime span, .btn-ghost span { position:relative; z-index:1; }
+    .btn-ghost { background:transparent; color:var(--dim); border:1px solid var(--muted); }
+    .btn-ghost::before { content:''; position:absolute; inset:0; background:var(--ghost); transform:translateX(-101%); transition:transform .3s ease; }
+    .btn-ghost:hover::before { transform:translateX(0); }
+    .btn-ghost:hover { color:var(--lime); border-color:var(--lime); }
+
+    /* HERO PHOTO */
+    .hero-photo-wrap {
+      position: relative; z-index: 2;
+      flex-shrink: 0;
+    }
+    .hero-photo-frame {
+      width: clamp(220px, 22vw, 340px);
+      aspect-ratio: 3/4;
+      position: relative;
+    }
+    .hero-photo-frame::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--lime) 0%, transparent 50%, var(--blood) 100%);
+      z-index: 0;
+    }
+    .hero-photo-frame::after {
+      content: '';
+      position: absolute;
+      top: 12px; left: 12px; right: -12px; bottom: -12px;
+      border: 1px solid rgba(200,255,0,0.2);
+      z-index: -1;
+    }
+    .hero-photo-inner {
+      position: absolute; inset: 2px;
+      background: var(--paper);
+      overflow: hidden;
+      z-index: 1;
+    }
+    /* Replace src="C:\Users\Admin\Downloads\profile.jpg" with your actual photo */
+    .hero-photo-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: grayscale(20%) contrast(1.05);
+    }
+    /* Fallback avatar shown when no image loaded */
+    .hero-photo-inner .avatar-fallback {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem;
+      background: linear-gradient(160deg, #0f1e0f 0%, #1a2d1a 100%);
+    }
+    .avatar-fallback svg { opacity: 0.5; }
+    .avatar-fallback span {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .photo-tag {
+      position: absolute;
+      bottom: -14px; left: -14px;
+      background: var(--blood);
+      color: var(--white);
+      font-family: var(--f-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      z-index: 3;
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--f-mono); font-size: 0.56rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted);
+      display: flex; flex-direction: column; align-items: center; gap: 0.7rem;
+    }
+    .scroll-hint::after {
+      content: ''; width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--lime), transparent);
+      animation: drip 2s ease-in-out infinite;
+    }
+    @keyframes drip { 0%,100%{opacity:1;transform:scaleY(1)} 50%{opacity:.4;transform:scaleY(.5)} }
+
+    /* ── SECTION SCAFFOLDING ── */
+    .s { position: relative; z-index: 10; }
+    .s-header {
+      display: flex; align-items: baseline; gap: 2rem;
+      margin-bottom: 4rem; padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .s-num { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.2em; color:var(--lime); opacity:.7; }
+    .s-title {
+      font-family: var(--f-impact);
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--white); line-height: 1;
+    }
+    .s-title em { font-family:var(--f-serif); font-style:italic; color:var(--lime); }
+    .s-line { flex:1; height:1px; background:var(--rule); }
+
+    /* ── ABOUT ── */
+    #about { padding: 120px 4vw; background: var(--ink2); }
+    .about-layout { display: grid; grid-template-columns: 5fr 4fr; gap: 7rem; align-items: start; }
+    .about-pull {
+      font-family: var(--f-serif); font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+      font-style: italic; color: var(--white); line-height: 1.4;
+      margin-bottom: 2.2rem;
+      border-left: 3px solid var(--lime); padding-left: 1.8rem;
+    }
+    .about-body p { font-size: 0.95rem; line-height: 1.7; max-width: 650px; color: var(--dim); margin-bottom: 1.1rem; }
+    .about-body p strong { color: var(--light); }
+
+    .identity-card { background: var(--paper); border: 1px solid var(--rule); padding: 2rem; }
+    .identity-card-header {
+      display: flex; align-items: center; gap: 0.7rem;
+      margin-bottom: 1.8rem; padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .icard-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .icard-dot:nth-child(1) { background: var(--blood); }
+    .icard-dot:nth-child(2) { background: var(--lime); opacity:.5; }
+    .icard-dot:nth-child(3) { background: var(--lime); opacity:.2; }
+    .icard-title { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-left:auto; }
+    .id-row { display:flex; justify-content:space-between; align-items:baseline; padding:0.6rem 0; border-bottom:1px solid rgba(200,255,0,0.04); }
+    .id-key { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+    .id-val { color:var(--light); font-weight:500; font-size:0.9rem; text-align:right; }
+    .id-val.ok { color:var(--lime); }
+    .id-val.hot { color:var(--blood); }
+    .collab-bar {
+      margin-top: 1.5rem; padding: 1rem;
+      background: rgba(200,255,0,0.05);
+      border: 1px solid rgba(200,255,0,0.15);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .collab-bar::before {
+      content: ''; width: 7px; height: 7px;
+      background: var(--lime); border-radius: 50%;
+      animation: pulse-lime 2s infinite; flex-shrink: 0;
+    }
+    @keyframes pulse-lime { 0%,100%{box-shadow:0 0 0 0 rgba(200,255,0,.4)} 50%{box-shadow:0 0 0 8px rgba(200,255,0,0)} }
+    .collab-text { font-family:var(--f-mono); font-size:0.63rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--lime); }
+
+    /* ── EXPERIENCE ── */
+    #experience { padding: 120px 4vw; }
+    .exp-intro {
+      max-width: 720px;
+      font-family: var(--f-serif); font-style: italic;
+      font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+      color: var(--white); line-height: 1.5;
+      margin-bottom: 4rem;
+      opacity: 0.9;
+    }
+
+    .exp-disclaimer {
+      font-family: var(--f-mono); font-size: 0.62rem;
+      letter-spacing: 0.1em; color: var(--muted);
+      border-left: 2px solid var(--blood);
+      padding: 0.6rem 1rem;
+      margin-bottom: 3rem;
+      background: rgba(255,60,31,0.04);
+    }
+
+    .engagements-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      margin-bottom: 3rem;
+    }
+    .eng-cell {
+      background: var(--ink);
+      padding: 2rem 1.8rem;
+      position: relative; overflow: hidden;
+      transition: background .3s;
+    }
+    .eng-cell::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; width: 100%; height: 0;
+      background: linear-gradient(180deg, rgba(200,255,0,0.04) 0%, transparent 100%);
+      transition: height .4s ease;
+    }
+    .eng-cell:hover { background: var(--paper); }
+    .eng-cell:hover::before { height: 100%; }
+    .eng-cat {
+      font-family: var(--f-mono); font-size: 0.58rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--lime); opacity: 0.7; margin-bottom: 0.8rem;
+    }
+    .eng-title {
+      font-family: var(--f-impact); font-size: 1.5rem;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 1rem; line-height: 1.1;
+    }
+    .eng-points { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .eng-points li {
+      font-family: var(--f-mono); font-size: 0.62rem;
+      letter-spacing: 0.06em; color: var(--muted);
+      padding-left: 1.2rem; position: relative;
+    }
+    .eng-points li::before { content: '→'; position: absolute; left: 0; color: var(--lime); font-size: 0.58rem; }
+
+    /* Reviews row */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .rev-cell {
+      background: var(--ink); padding: 1.5rem 1.4rem;
+      transition: background .3s;
+      position: relative; overflow: hidden;
+    }
+    .rev-cell:hover { background: var(--paper); }
+    .rev-icon { font-size: 1.4rem; margin-bottom: 0.8rem; display: block; }
+    .rev-title {
+      font-family: var(--f-impact); font-size: 1.1rem;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--white); line-height: 1.1; margin-bottom: 0.5rem;
+    }
+    .rev-sub { font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.08em; color: var(--muted); }
+
+    /* ── ACHIEVEMENTS ── */
+    #achievements { padding: 120px 4vw; background: var(--ink2); }
+    .ach-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .ach-card {
+      background: var(--ink);
+      border: 1px solid var(--rule);
+      padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, background .3s;
+    }
+    .ach-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: transparent; transition: background .3s;
+    }
+    .ach-card:hover { background: var(--paper); border-color: rgba(200,255,0,0.25); }
+    .ach-card:hover::before { background: var(--lime); }
+    .ach-card.blood:hover::before { background: var(--blood); }
+    .ach-card.blood { border-color: rgba(255,60,31,0.1); }
+
+    .ach-badge {
+      font-family: var(--f-mono); font-size: 0.58rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.22rem 0.6rem; border: 1px solid;
+      display: inline-block; margin-bottom: 1rem;
+    }
+    .ach-badge.lime { color: var(--lime); border-color: var(--lime); }
+    .ach-badge.blood { color: var(--blood); border-color: var(--blood); }
+    .ach-badge.gold { color: #f5c518; border-color: #f5c518; }
+    .ach-badge.blue { color: #5bc8ff; border-color: #5bc8ff; }
+
+    .ach-title {
+      font-family: var(--f-impact); font-size: 1.3rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 0.6rem; line-height: 1.1;
+    }
+    .ach-body { font-size: 0.88rem; line-height: 1.65; color: var(--muted); }
+    .ach-body strong { color: var(--light); }
+
+    .ach-placeholder {
+      border: 1px dashed rgba(200,255,0,0.15);
+      background: transparent;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; gap: 0.8rem;
+      min-height: 160px;
+    }
+    .ach-placeholder-icon { font-size: 1.5rem; opacity: 0.3; }
+    .ach-placeholder-text {
+      font-family: var(--f-mono); font-size: 0.62rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── PROJECTS ── */
+    #projects { padding: 120px 4vw; }
+    .projects-list { display: flex; flex-direction: column; }
+    .proj-row {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      gap: 3rem;
+      padding: 2.2rem 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+    }
+    .proj-row::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--ghost);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .35s ease;
+    }
+    .proj-row:hover::before { transform: scaleX(1); }
+    .proj-num { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.16em; color:var(--muted); position:relative; z-index:1; }
+    .proj-info { position: relative; z-index: 1; }
+    .proj-type { font-family:var(--f-mono); font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--lime); opacity:.7; margin-bottom:0.4rem; }
+    .proj-name { font-family:var(--f-impact); font-size:clamp(1.3rem,2.2vw,1.9rem); letter-spacing:0.04em; text-transform:uppercase; color:var(--white); margin-bottom:0.4rem; transition:color .2s; }
+    .proj-row:hover .proj-name { color: var(--lime); }
+    .proj-desc { font-size:0.88rem; color:var(--muted); line-height:1.5; max-width:580px; }
+    .proj-meta { position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-end; gap:0.7rem; }
+    .proj-tag { font-family:var(--f-mono); font-size:0.58rem; letter-spacing:0.1em; color:var(--muted); }
+    .proj-arrow { font-size:1.2rem; color:var(--muted); transition:transform .2s, color .2s; }
+    .proj-row:hover .proj-arrow { transform:translate(4px,-4px); color:var(--lime); }
+
+    /* ── SERVICES ── */
+    #services { padding: 120px 4vw; background: var(--ink2); }
+    .services-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2px; background:var(--rule); border:1px solid var(--rule); }
+    .svc-card {
+      background: var(--ink); padding: 3rem 2.5rem;
+      position: relative; overflow: hidden; transition: background .3s;
+    }
+    .svc-card:hover { background: var(--paper); }
+    .svc-card::after {
+      content: attr(data-num); position: absolute;
+      bottom: -1rem; right: 1.5rem;
+      font-family: var(--f-impact); font-size: 7rem;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(200,255,0,0.04);
+      pointer-events: none; line-height: 1;
+      transition: -webkit-text-stroke .3s;
+    }
+    .svc-card:hover::after { -webkit-text-stroke-color: rgba(200,255,0,0.09); }
+    .svc-icon { font-size: 1.7rem; margin-bottom: 1.4rem; display: block; }
+    .svc-name { font-family:var(--f-impact); font-size:1.7rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--white); margin-bottom:0.9rem; line-height:1; }
+    .svc-desc { font-size:0.9rem; line-height:1.75; color:var(--dim); margin-bottom:1.4rem; }
+    .svc-list { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .svc-list li { font-family:var(--f-mono); font-size:0.63rem; letter-spacing:0.07em; color:var(--muted); padding-left:1.2rem; position:relative; }
+    .svc-list li::before { content:'→'; position:absolute; left:0; color:var(--lime); font-size:0.58rem; }
+
+    /* ── BLOG ── */
+    #blog { padding: 120px 4vw; }
+    .blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+    .blog-card {
+      background: var(--ink); border: 1px solid var(--rule);
+      padding: 2rem; display: flex; flex-direction: column;
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, background .3s;
+    }
+    .blog-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:transparent; transition:background .3s; }
+    .blog-card:hover { background: var(--paper); border-color: rgba(200,255,0,0.25); }
+    .blog-card:hover::before { background: var(--lime); }
+    .blog-cat { font-family:var(--f-mono); font-size:0.57rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--lime); margin-bottom:1rem; opacity:.8; }
+    .blog-title { font-family:var(--f-serif); font-size:1.2rem; font-style:italic; color:var(--white); line-height:1.35; margin-bottom:1rem; flex:1; transition:color .2s; }
+    .blog-card:hover .blog-title { color: var(--lime); }
+    .blog-meta { font-family:var(--f-mono); font-size:0.58rem; letter-spacing:0.1em; color:var(--muted); display:flex; justify-content:space-between; padding-top:1rem; border-top:1px solid var(--rule); }
+    .blog-card.featured { grid-column:span 2; background:var(--paper); border-color:rgba(200,255,0,0.15); display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:end; }
+    .blog-card.featured .blog-title { font-size:1.8rem; }
+    .blog-card.featured .blog-cat { color: var(--blood); }
+    .blog-feat-num { font-family:var(--f-impact); font-size:5.5rem; color:transparent; -webkit-text-stroke:1px rgba(200,255,0,0.1); line-height:1; align-self:start; }
+
+    /* ── CONTACT ── */
+    #contact { padding: 120px 4vw 80px; background: var(--ink2); }
+    .contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:8rem; align-items:start; }
+    .contact-headline { font-family:var(--f-impact); font-size:clamp(2.5rem,6vw,5.5rem); line-height:0.9; text-transform:uppercase; color:var(--white); margin-bottom:2rem; }
+    .contact-headline span { color: var(--lime); }
+    .contact-subtext { font-size:1rem; line-height:1.8; color:var(--dim); margin-bottom:3rem; max-width:380px; }
+    .contact-channels { display:flex; flex-direction:column; gap:0; }
+    .channel {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.2rem 0; border-bottom:1px solid var(--rule);
+      text-decoration:none; color:inherit;
+      transition: padding-left .25s;
+    }
+    .channel:hover { padding-left: 0.8rem; }
+    .channel-name { font-family:var(--f-mono); font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); transition:color .2s; }
+    .channel:hover .channel-name { color: var(--lime); }
+    .channel-val { font-size:0.92rem; color:var(--light); font-weight:500; transition:color .2s; }
+    .channel:hover .channel-val { color: var(--lime); }
+    .cf { display:flex; flex-direction:column; gap:1.2rem; }
+    .cf-group label { display:block; font-family:var(--f-mono); font-size:0.59rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
+    .cf-group input, .cf-group textarea, .cf-group select {
+      width:100%; background:var(--paper); border:1px solid var(--rule);
+      border-bottom-color:var(--muted); color:var(--light);
+      font-family:var(--f-mono); font-size:0.8rem; padding:0.9rem 1rem;
+      outline:none; resize:none; appearance:none;
+      transition: border-color .25s, background .25s;
+    }
+    .cf-group input:focus, .cf-group textarea:focus, .cf-group select:focus { border-color:var(--lime); background:rgba(200,255,0,0.025); }
+    .cf-group textarea { min-height:130px; }
+    .cf-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .cf-submit {
+      font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.2em;
+      text-transform:uppercase; background:var(--lime); color:var(--ink);
+      border:none; padding:1.1rem 2.5rem; width:100%;
+      position:relative; overflow:hidden; transition:all .25s;
+    }
+    .cf-submit::before { content:''; position:absolute; inset:0; background:var(--blood); transform:translateX(-101%); transition:transform .3s ease; }
+    .cf-submit:hover::before { transform:translateX(0); }
+    .cf-submit span { position:relative; z-index:1; }
+    .cf-submit:hover span { color:var(--white); }
+
+    /* FOOTER */
+    footer {
+      position:relative; z-index:10; padding:2rem 4vw;
+      border-top:1px solid var(--rule);
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--ink);
+    }
+    .f-left { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.12em; color:var(--muted); }
+    .f-left span { color:var(--lime); }
+    .f-right { display:flex; gap:2.5rem; }
+    .f-right a { font-family:var(--f-mono); font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .2s; }
+    .f-right a:hover { color:var(--lime); }
+
+    /* REVEAL */
+    .reveal { opacity:1; transform:translateY(28px); transition:opacity .75s ease, transform .75s ease; }
+    .reveal.in { opacity:1; transform:translateY(0); }
+    .reveal-l { opacity:1; transform:translateX(-28px); transition:opacity .75s ease, transform .75s ease; }
+    .reveal-l.in { opacity:1; transform:translateX(0); }
+    .reveal-r { opacity:1; transform:translateX(28px); transition:opacity .75s ease, transform .75s ease; }
+    .reveal-r.in { opacity:1; transform:translateX(0); }
+    .d1{transition-delay:.06s}.d2{transition-delay:.13s}.d3{transition-delay:.2s}
+    .d4{transition-delay:.27s}.d5{transition-delay:.34s}.d6{transition-delay:.41s}
+
+    /* ── HAMBURGER MENU ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 38px; height: 38px;
+      background: transparent;
+      border: 1px solid var(--rule);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 20px; height: 1px;
+      background: var(--lime);
+      transition: all .3s ease;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    /* Mobile nav drawer */
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 62px; left: 0; right: 0; bottom: 0;
+      background: rgba(8,11,8,0.98);
+      backdrop-filter: blur(20px);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      overflow-y: auto;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a {
+      font-family: var(--f-impact);
+      font-size: clamp(2rem, 8vw, 3rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+      padding: 0.6rem 2rem;
+      width: 100%; text-align: center;
+      border-bottom: 1px solid var(--rule);
+      transition: color .2s, background .2s;
+    }
+    .nav-drawer a:hover { color: var(--lime); background: var(--ghost); }
+    .nav-drawer .drawer-pill {
+      margin-top: 2rem;
+      font-family: var(--f-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--lime);
+      padding: 0.8rem 2rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .nav-drawer .drawer-pill::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--ink); border-radius: 50%;
+      animation: blink 1.8s step-end infinite;
+    }
+
+    /* ── RESPONSIVE — 1100px ── */
+    @media(max-width:1100px) {
+      #hero { grid-template-columns:1fr; gap:3rem; padding: 90px 5vw 60px; }
+      .hero-photo-wrap { display:none; }
+      .about-layout { grid-template-columns:1fr; gap:3.5rem; }
+      .engagements-grid { grid-template-columns:repeat(2,1fr); }
+      .reviews-grid { grid-template-columns:repeat(2,1fr); }
+      .ach-grid { grid-template-columns:repeat(2,1fr); }
+      .services-grid { grid-template-columns:1fr; }
+      .blog-grid { grid-template-columns:1fr; }
+      .blog-card.featured { grid-column:span 1; display:flex; flex-direction:column; }
+      .contact-layout { grid-template-columns:1fr; gap:4rem; }
+    }
+
+    /* ── RESPONSIVE — 900px ── */
+    @media(max-width:900px) {
+      .nav-links { display:none; }
+      .nav-pill { display:none; }
+      .nav-hamburger { display:flex; }
+
+      .s { padding: 80px 5vw; }
+      #about { padding: 80px 5vw; }
+      #experience { padding: 80px 5vw; }
+      #achievements { padding: 80px 5vw; }
+      #projects { padding: 80px 5vw; }
+      #services { padding: 80px 5vw; }
+      #blog { padding: 80px 5vw; }
+      #contact { padding: 80px 5vw 60px; }
+
+      .s-header { gap: 1.2rem; margin-bottom: 2.5rem; }
+      .s-title { font-size: clamp(1.8rem, 5vw, 3rem); }
+
+      .hero-bottom { grid-template-columns:1fr; gap:2rem; }
+      .hero-actions { align-items:flex-start; flex-direction: row; flex-wrap: wrap; }
+
+      .engagements-grid { grid-template-columns:1fr; }
+      .reviews-grid { grid-template-columns:repeat(2,1fr); }
+      .ach-grid { grid-template-columns:repeat(2,1fr); }
+
+      .proj-row { grid-template-columns:48px 1fr; gap:1.5rem; padding: 1.6rem 0; }
+      .proj-meta { display:none; }
+
+      .blog-grid { grid-template-columns:1fr; }
+      .blog-feat-num { display:none; }
+
+      .contact-layout { gap:3rem; }
+      .contact-subtext { max-width:100%; }
+
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .f-right { justify-content: center; }
+    }
+
+    /* ── RESPONSIVE — 600px ── */
+    @media(max-width:600px) {
+      html { font-size: 15px; }
+
+      #nav { padding: 0 4vw; height: 56px; }
+      .nav-wordmark { font-size: 1.1rem; }
+      .nav-drawer { top: 56px; }
+
+      #hero { padding: 80px 4vw 50px; min-height: auto; }
+      .hero-eyebrow { font-size: 0.58rem; gap: 0.8rem; }
+      .hero-eyebrow::before { width: 28px; }
+      .hero-name { font-size: clamp(3rem, 13vw, 5rem); }
+      .hero-name .surname { font-size: clamp(1.4rem, 5vw, 2.2rem); }
+      .hero-bottom { margin-top: 2rem; padding-top: 1.5rem; gap: 1.5rem; }
+      .hero-desc { font-size: 0.88rem; }
+      .hero-metrics { gap: 1.5rem; justify-content: flex-start; }
+      .metric-val { font-size: 2.4rem; }
+      .metric-label { font-size: 0.5rem; }
+      .hero-actions { gap: 0.7rem; }
+      .btn-lime, .btn-ghost { padding: 0.75rem 1.4rem; font-size: 0.6rem; }
+
+      .s { padding: 60px 4vw; }
+      #about { padding: 60px 4vw; }
+      #experience { padding: 60px 4vw; }
+      #achievements { padding: 60px 4vw; }
+      #projects { padding: 60px 4vw; }
+      #services { padding: 60px 4vw; }
+      #blog { padding: 60px 4vw; }
+      #contact { padding: 60px 4vw 50px; }
+
+      .s-header { flex-wrap: wrap; gap: 0.8rem; margin-bottom: 2rem; padding-bottom: 1rem; }
+      .s-line { display: none; }
+      .s-title { font-size: clamp(1.6rem, 7vw, 2.4rem); width: 100%; }
+      .s-num { font-size: 0.55rem; }
+
+      .about-pull { font-size: clamp(1.1rem, 4vw, 1.4rem); padding-left: 1.2rem; }
+      .about-body p { font-size: 0.88rem; }
+      .id-val { font-size: 0.82rem; }
+
+      .engagements-grid { grid-template-columns:1fr; gap:1px; }
+      .eng-cell { padding: 1.5rem 1.2rem; }
+      .eng-title { font-size: 1.2rem; }
+
+      .reviews-grid { grid-template-columns:1fr; }
+      .rev-cell { padding: 1.2rem; }
+      .rev-title { font-size: 1rem; }
+
+      .ach-grid { grid-template-columns:1fr; }
+      .ach-card { padding: 1.5rem; }
+      .ach-title { font-size: 1.1rem; }
+      .ach-body { font-size: 0.85rem; }
+
+      .proj-row { grid-template-columns:36px 1fr; gap:1rem; padding: 1.3rem 0; }
+      .proj-num { font-size: 0.55rem; }
+      .proj-name { font-size: clamp(1rem, 4vw, 1.4rem); }
+      .proj-desc { font-size: 0.82rem; }
+
+      .services-grid { grid-template-columns:1fr; }
+      .svc-card { padding: 2rem 1.5rem; }
+      .svc-name { font-size: 1.4rem; }
+      .svc-desc { font-size: 0.85rem; }
+
+      .blog-grid { grid-template-columns:1fr; }
+      .blog-card { padding: 1.5rem; }
+      .blog-title { font-size: 1rem; }
+
+      .contact-headline { font-size: clamp(2rem, 10vw, 3.5rem); }
+      .contact-subtext { font-size: 0.9rem; }
+      .channel { padding: 1rem 0; }
+      .channel-val { font-size: 0.8rem; word-break: break-all; }
+
+      .cf-row { grid-template-columns:1fr; }
+      .cf-submit { padding: 1rem; font-size: 0.65rem; }
+
+      footer { padding: 1.5rem 4vw; }
+      .f-left { font-size: 0.55rem; text-align:center; }
+      .f-right { gap: 1.5rem; }
+    }
+
+    /* ── RESPONSIVE — 400px (tiny phones) ── */
+    @media(max-width:400px) {
+      html { font-size: 14px; }
+      .hero-name { font-size: clamp(2.6rem, 14vw, 4rem); }
+      .hero-metrics { flex-direction: column; gap: 1rem; }
+      .hero-actions { flex-direction: column; width: 100%; }
+      .btn-lime, .btn-ghost { width: 100%; text-align: center; display:block; }
+      .channel { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+      .collab-bar { flex-direction: column; }
+    }
+  
+/* ================= MOBILE PERFECT FIX ================= */
+
+@media (max-width: 768px) {
+
+  body { line-height: 1.6; }
+
+  #hero { padding: 70px 5vw 40px; gap: 2rem; }
+
+  .hero-name { font-size: 2.8rem !important; }
+
+  .hero-name .surname { font-size: 1.4rem !important; }
+
+  .hero-desc { font-size: 0.9rem; }
+
+  .hero-metrics { flex-direction: row; justify-content: space-between; gap: 1rem; }
+
+  .metric-val { font-size: 2rem; }
+
+  .hero-actions { width: 100%; flex-direction: column; }
+
+  .btn-lime, .btn-ghost { width: 100%; text-align: center; }
+
+  .about-layout { gap: 2rem; }
+
+  .about-body p { font-size: 0.85rem; }
+
+  .identity-card { padding: 1.2rem; }
+
+  .id-row { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+
+  .eng-cell { padding: 1.2rem; }
+
+  .eng-title { font-size: 1.1rem; }
+
+  .proj-row { grid-template-columns: 1fr; gap: 0.8rem; }
+
+  .proj-meta { display: none; }
+
+  .contact-headline { font-size: 2.2rem; }
+
+  .contact-subtext { font-size: 0.85rem; }
+
+  .channel { flex-direction: column; align-items: flex-start; }
+
+  .cf-row { grid-template-columns: 1fr; }
+
+  .cf-group input,
+  .cf-group textarea,
+  .cf-group select {
+    font-size: 0.75rem;
+    padding: 0.7rem;
+  }
+
+  .cf-submit {
+    font-size: 0.65rem;
+    padding: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .hero-name { font-size: 2.4rem !important; }
+
+  .hero-metrics { flex-direction: column; align-items: flex-start; }
+
+  .metric-val { font-size: 1.8rem; }
+
+  .contact-headline { font-size: 1.8rem; }
+
+}
+
+
+/* ===== FINAL MOBILE REFINEMENT ===== */
+@media (max-width: 768px) {
+
+  .hero-metrics {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .metric {
+    flex: 1;
+    text-align: center;
+  }
+
+  .hero-name {
+    font-size: 3.1rem !important;
+  }
+
+  .hero-name .surname {
+    font-size: 1.6rem !important;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .metric-val {
+    font-size: 2.2rem;
+  }
+
+  .metric-label {
+    font-size: 0.65rem;
+  }
+
+  .btn-lime, .btn-ghost {
+    font-size: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+</style>
+</head>
+<body>
+<div id="grain"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a href="#hero" class="nav-wordmark">HVS<em>.</em>SEC</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#achievements">Certifications</a></li>
+    <li><a href="#projects">Toolkit</a></li>
+    <li><a href="#services">Focus Areas</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-pill">Open to Opportunities</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="nav-drawer" id="nav-drawer">
+  <a href="#about" class="drawer-link">About</a>
+  <a href="#experience" class="drawer-link">Experience</a>
+  <a href="#achievements" class="drawer-link">Certifications</a>
+  <a href="#projects" class="drawer-link">Toolkit</a>
+  <a href="#services" class="drawer-link">Focus Areas</a>
+  <a href="#contact" class="drawer-link">Contact</a>
+  <a href="#contact" class="drawer-pill">Open to Opportunities</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="hero" class="s">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Technology Risk Consultant &amp; AI Governance Specialist</div>
+    <h1 class="hero-name">
+      <span class="accent">Harshvardhan</span>
+      <span class="surname">Singh</span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        <strong>Mumbai-based Technology Risk &amp; Controls consultant at EY</strong>, assessing enterprise systems across India's top BFSI institutions. ISO/IEC 42001 Lead Implementer and Certified LLM Security Professional, extending a governance foundation into AI security and offensive risk domains.
+      </p>
+      <div class="hero-metrics">
+        <div class="metric">
+          <span class="metric-val" data-target="7100">0</span>
+          <span class="metric-label">Risk Findings</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" data-target="55">0</span>
+          <span class="metric-label">Audit Reports</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" data-target="3">0</span>
+          <span class="metric-label">Certifications</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-lime"><span>View Experience</span></a>
+        <a href="#contact" class="btn-ghost"><span>Let's Connect</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STYLIZED AVATAR — replace with profile.jpg any time by swapping this block -->
+  <div class="hero-photo-wrap">
+    <div class="hero-photo-frame">
+      <div class="hero-photo-inner">
+      <img src="profile.jpg" alt="Harshvardhan Singh">
+    </div>
+    </div>
+    <div class="photo-tag">Technology Risk Consultant</div>
+  </div>
+
+  
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="about" class="s">
+  <div class="s-header">
+    <span class="s-num">01</span>
+    <h2 class="s-title">About <em>Me</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="about-layout">
+    <div class="about-left reveal-l">
+      <p class="about-pull">"Translating technical risk into decisions people can act on — for engineers, auditors, and executives alike."</p>
+      <div class="about-body">
+  <p>I'm <strong>Harshvardhan Singh</strong>, a Technology Risk &amp; Controls consultant at <strong>EY</strong>, with two years assessing enterprise systems across India's top BFSI institutions — translating thousands of technical risk observations into audit-ready findings and regulator-aligned remediation roadmaps.</p>
+  <p>My day-to-day work spans application, API, cloud, mobile, and database risk domains, mapped against frameworks like the RBI Cybersecurity Framework, ISO 27001, NIST CSF, and DPDPA — bridging the gap between engineering teams and non-technical stakeholders.</p>
+  <p>I hold the <strong>ISO/IEC 42001:2023 AI Management Systems Lead Implementer</strong> certification and am a <strong>Certified LLM Security Professional</strong>, and I'm extending that governance foundation into offensive AI/red-team risk through the <strong>CRTP</strong> certification (in progress).</p>
+  <p>I'm deliberately building toward AI Security and Adversarial ML research — combining a controls-and-governance foundation with hands-on technical depth in how AI systems actually fail.</p>
+</div>
+    </div>
+    <div class="about-right reveal-r">
+      <div class="identity-card">
+        <div class="identity-card-header">
+          <span class="icard-dot"></span><span class="icard-dot"></span><span class="icard-dot"></span>
+          <span class="icard-title">identity.json</span>
+        </div>
+        <div class="id-row"><span class="id-key">Name</span><span class="id-val">Harshvardhan Singh</span></div>
+        <div class="id-row"><span class="id-key">Role</span><span class="id-val">Cybersecurity Consultant, EY</span></div>
+        <div class="id-row"><span class="id-key">Location</span><span class="id-val">Mumbai, India 🇮🇳</span></div>
+        <div class="id-row"><span class="id-key">Background</span><span class="id-val">Technology Risk &amp; GRC</span></div>
+        <div class="id-row"><span class="id-key">Specialisation</span><span class="id-val">AI Governance &amp; LLM Security</span></div>
+        <div class="id-row"><span class="id-key">CRTP</span><span class="id-val ok">In Progress</span></div>
+        <div class="id-row"><span class="id-key">Education</span><span class="id-val">M.Sc. Cybersecurity, NFSU</span></div>
+        <div class="collab-bar">
+          <span class="collab-text">Open to AI Security &amp; Product Security roles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EXPERIENCE ══ -->
+<section id="experience" class="s">
+  <div class="s-header">
+    <span class="s-num">02</span>
+    <h2 class="s-title">Professional <em>Experience</em></h2>
+    <div class="s-line"></div>
+  </div>
+
+  <p class="exp-intro reveal">Two years at EY, assessing enterprise systems across India's top BFSI institutions — turning technical risk into audit-ready findings and remediation roadmaps that engineering teams and audit committees both act on.</p>
+
+  <div class="exp-disclaimer reveal">
+    ⚠ Client names remain confidential per EY engagement policy. Scope, methodology, and outcomes below are described in general terms.
+  </div>
+
+  <!-- Engagements -->
+  <div style="margin-bottom:1rem;">
+    <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime);margin-bottom:1rem;opacity:0.8;">// EY — Cybersecurity Consultant, Financial Services (Oct 2025 – Present)</div>
+  </div>
+  <div class="engagements-grid" style="margin-bottom:3rem;">
+    <div class="eng-cell reveal d1">
+      <div class="eng-cat">01 / Multi-App Assessment</div>
+      <div class="eng-title">Controls Assessment — 14 Apps</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Owned end-to-end controls testing across 14 enterprise applications — including Adobe Martech, Apigee API Gateway, CDP, and Account Aggregator — spanning 9 risk domains, translating findings into 55+ audit-ready reports for engineering and non-technical stakeholders.</p>
+      <ul class="eng-points">
+        <li>14 applications · 9 risk domains</li>
+        <li>55+ audit-ready reports delivered</li>
+        <li>Engineering &amp; executive-facing reporting</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d2">
+      <div class="eng-cat">02 / Privacy &amp; DPDPA</div>
+      <div class="eng-title">DPDPA Privacy Assessment</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Delivered a DPDPA-mapped privacy and controls assessment for a top commercial bank, identifying regulatory gaps and building a remediation roadmap adopted ahead of an enforcement deadline — directly analogous to designing data-governance controls for a regulated technology system.</p>
+      <ul class="eng-points">
+        <li>DPDPA gap analysis &amp; roadmap</li>
+        <li>Adopted ahead of enforcement deadline</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d3">
+      <div class="eng-cat">03 / Cloud</div>
+      <div class="eng-title">AWS &amp; Azure Configuration Review</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Performed cloud configuration and access-control reviews across AWS and Azure (IAM, storage, policy misconfigurations), producing CIS/NIST-aligned recommendations adopted into client governance baselines.</p>
+      <ul class="eng-points">
+        <li>IAM &amp; storage misconfiguration review</li>
+        <li>CIS / NIST-aligned recommendations</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d4">
+      <div class="eng-cat">04 / Mobile</div>
+      <div class="eng-title">Mobile Application Risk Assessment</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Conducted Android/iOS application risk assessments using MobSF, Frida, and ADB, validating findings against the OWASP Mobile Top 10 and translating technical exposure into business-risk language for client leadership.</p>
+      <ul class="eng-points">
+        <li>MobSF · Frida · ADB</li>
+        <li>OWASP Mobile Top 10 coverage</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d5">
+      <div class="eng-cat">05 / API</div>
+      <div class="eng-title">API Risk Assessment</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Ran API risk assessments against the OWASP API Top 10, identifying authorization and asset-management control gaps and partnering with client dev teams to close them pre-release.</p>
+      <ul class="eng-points">
+        <li>OWASP API Top 10</li>
+        <li>Pre-release remediation partnership</li>
+      </ul>
+    </div>
+    <div class="eng-cell reveal d6">
+      <div class="eng-cat">06 / RPA Governance</div>
+      <div class="eng-title">RPA Governance &amp; Controls</div>
+      <p style="font-size:0.82rem;line-height:1.65;color:var(--dim);margin-bottom:1rem;">Assessed 3 automation platforms (Automation Anywhere, Automation Edge, SheetKraft) across access management, encryption, and logging controls — establishing a leading private bank's first formal RPA governance framework.</p>
+      <ul class="eng-points">
+        <li>Automation Anywhere · Automation Edge · SheetKraft</li>
+        <li>First formal RPA governance framework</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Prior role -->
+  <div style="margin-bottom:1rem;">
+    <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime);margin-bottom:1rem;opacity:0.8;">// EY — Associate Consultant, Financial Services (Jul 2024 – Sep 2025)</div>
+  </div>
+  <div class="reviews-grid">
+    <div class="rev-cell reveal d1">
+      <span class="rev-icon">🏦</span>
+      <div class="rev-title">Crown Jewel Application</div>
+      <div class="rev-sub" style="margin-bottom:0.8rem;">Top Indian public sector bank</div>
+      <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);">Identified 1,800+ risk and control findings across source code, application/API, database, and network layers on the bank's highest-criticality application; managed the full CAPA lifecycle to verified closure of all critical/high findings. Recognised with the <strong>EY Client Extraordinaire Award</strong>.</p>
+    </div>
+    <div class="rev-cell reveal d2">
+      <span class="rev-icon">📋</span>
+      <div class="rev-title">Comprehensive GRC Review</div>
+      <div class="rev-sub" style="margin-bottom:0.8rem;">30+ applications · 4 departments</div>
+      <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);">Independently scoped and managed a controls-testing program across 30+ applications, producing 7,100+ structured risk findings aligned with the RBI Cybersecurity Framework and Master Direction on IT — with roadmaps used directly by application owners.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ACHIEVEMENTS ══ -->
+<section id="achievements" class="s">
+  <div class="s-header">
+    <span class="s-num">03</span>
+    <h2 class="s-title">Certifications <em>&amp; Recognition</em></h2>
+    <div class="s-line"></div>
+  </div>
+
+  <div class="ach-grid">
+    <!-- ISO 42001 Certification — TÜV SÜD -->
+    <div class="ach-card reveal d1">
+      <span class="ach-badge blue">Certification</span>
+      <div class="ach-title">ISO 42001 Lead Implementer</div>
+      <div class="ach-body">Certified <strong>ISO/IEC 42001 Lead Implementer</strong> by TÜV SÜD — one of the world's most respected technical certification and testing organisations. ISO 42001 is the international standard for AI Management Systems, covering responsible AI governance, risk management, and ethical deployment of artificial intelligence across organisations. This certification demonstrates expertise in designing, implementing, and continuously improving an AI management framework aligned to global best practices — a rare and forward-looking credential in the security and technology space.</div>
+    </div>
+
+    <!-- CLLMSP -->
+    <div class="ach-card reveal d2">
+      <span class="ach-badge lime">Certification</span>
+      <div class="ach-title">Certified LLM Security Professional</div>
+      <div class="ach-body">Certified in <strong>LLM/AI Security &amp; Governance (CLLMSP)</strong>, covering the OWASP Top 10 for LLMs, prompt injection, model evaluation and red-teaming protocols, MCP security, and AI agent/orchestration risk — the technical counterpart to the governance-side ISO 42001 credential.</div>
+    </div>
+
+    <!-- CRTP in progress -->
+    <div class="ach-card blood reveal d3">
+      <span class="ach-badge blood">In Progress</span>
+      <div class="ach-title">Certified Red Team Professional (CRTP)</div>
+      <div class="ach-body">Working through <strong>Altered Security's CRTP</strong> to build hands-on offensive Active Directory skills — extending a governance-and-audit foundation into practical, adversarial technical depth.</div>
+    </div>
+
+    <!-- EY Award -->
+    <div class="ach-card reveal d4">
+      <span class="ach-badge gold">Recognition</span>
+      <div class="ach-title">EY Client Extraordinaire Award</div>
+      <div class="ach-body">Recognised for engagement delivery impact on a controls assessment for the highest-criticality application at a top Indian public sector bank — 1,800+ findings identified and taken through to verified closure.</div>
+    </div>
+
+    <!-- AI Governance specialisation -->
+    <div class="ach-card reveal d5">
+      <span class="ach-badge blue">Specialisation</span>
+      <div class="ach-title">AI Security &amp; Governance</div>
+      <div class="ach-body">Combining a risk-and-controls foundation with ISO 42001 Lead Implementer certification builds toward a dual capability: understanding how AI systems fail from a security perspective, and designing the governance frameworks that make them trustworthy. That intersection is one of the most underserved areas in enterprise AI risk today.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TOOLKIT ══ -->
+<section id="projects" class="s">
+  <div class="s-header">
+    <span class="s-num">04</span>
+    <h2 class="s-title">Technical <em>Toolkit</em></h2>
+    <div class="s-line"></div>
+  </div>
+
+  <div class="projects-list">
+    <div class="proj-row reveal">
+      <span class="proj-num">001</span>
+      <div class="proj-info">
+        <div class="proj-type">// AI Risk Frameworks</div>
+        <div class="proj-name">AI Governance Frameworks</div>
+        <p class="proj-desc">NIST AI RMF, ISO/IEC 42001, EU AI Act — AI risk registers, model cards, and acceptable use policies applied in real engagement work.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">NIST AI RMF · ISO 42001 · EU AI Act</span></div></div>
+    </div>
+    <div class="proj-row reveal d1">
+      <span class="proj-num">002</span>
+      <div class="proj-info">
+        <div class="proj-type">// LLM / AI Security</div>
+        <div class="proj-name">LLM &amp; Agent Security</div>
+        <p class="proj-desc">OWASP Top 10 for LLMs, prompt injection patterns, model evaluation and red-teaming protocols, MCP security, and AI agent/orchestration risk.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">OWASP LLM Top 10 · MCP Security</span></div></div>
+    </div>
+    <div class="proj-row reveal d2">
+      <span class="proj-num">003</span>
+      <div class="proj-info">
+        <div class="proj-type">// AI Data &amp; Compliance</div>
+        <div class="proj-name">AI Data Governance</div>
+        <p class="proj-desc">GDPR/CCPA/DPDPA in AI contexts, differential privacy, consent management, and AI lifecycle governance across regulated environments.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">DPDPA · GDPR · CCPA</span></div></div>
+    </div>
+    <div class="proj-row reveal d3">
+      <span class="proj-num">004</span>
+      <div class="proj-info">
+        <div class="proj-type">// Risk &amp; Controls</div>
+        <div class="proj-name">Controls Testing &amp; Remediation</div>
+        <p class="proj-desc">Controls design &amp; effectiveness testing, risk-prioritised remediation roadmaps, CAPA lifecycle management, and audit documentation across enterprise environments.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">ISO 27001/27701/42001 · NIST CSF · RBI CSF</span></div></div>
+    </div>
+    <div class="proj-row reveal d4">
+      <span class="proj-num">005</span>
+      <div class="proj-info">
+        <div class="proj-type">// Technology &amp; Systems Risk</div>
+        <div class="proj-name">Application, Cloud &amp; Mobile Risk</div>
+        <p class="proj-desc">Application, API, cloud (AWS/Azure), mobile, source code (SAST), network, and database risk assessment across enterprise platforms.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">AWS · Azure · SAST</span></div></div>
+    </div>
+    <div class="proj-row reveal d5">
+      <span class="proj-num">006</span>
+      <div class="proj-info">
+        <div class="proj-type">// Tooling</div>
+        <div class="proj-name">Hands-On Technical Tooling</div>
+        <p class="proj-desc">Day-to-day technical tooling used across assessment and audit engagements.</p>
+      </div>
+      <div class="proj-meta"><div class="proj-stack"><span class="proj-tag">Burp Suite Pro · Nessus · MobSF · Postman · AWS IAM Analyser · Azure Policy · Wireshark</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOCUS AREAS ══ -->
+<section id="services" class="s">
+  <div class="s-header">
+    <span class="s-num">05</span>
+    <h2 class="s-title">Focus <em>Areas</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="services-grid">
+    <div class="svc-card reveal" data-num="01">
+      <span class="svc-icon">🤖</span>
+      <div class="svc-name">AI Governance &amp; Risk</div>
+      <p class="svc-desc">Designing and assessing AI management frameworks aligned to ISO/IEC 42001, NIST AI RMF, and the EU AI Act — risk registers, model cards, and acceptable use policies that make AI adoption auditable rather than ad hoc.</p>
+      <ul class="svc-list">
+        <li>ISO/IEC 42001 AI management systems</li>
+        <li>NIST AI RMF &amp; EU AI Act alignment</li>
+        <li>AI risk registers &amp; model cards</li>
+        <li>AI lifecycle governance</li>
+      </ul>
+    </div>
+    <div class="svc-card reveal d1" data-num="02">
+      <span class="svc-icon">🔐</span>
+      <div class="svc-name">LLM &amp; AI Agent Security</div>
+      <p class="svc-desc">Applying the OWASP Top 10 for LLMs and MCP security principles to real agent and orchestration risk — the technical layer beneath AI governance, and the direction I'm actively deepening.</p>
+      <ul class="svc-list">
+        <li>OWASP Top 10 for LLMs</li>
+        <li>Prompt injection &amp; red-teaming protocols</li>
+        <li>MCP &amp; AI agent/orchestration risk</li>
+      </ul>
+    </div>
+    <div class="svc-card reveal d2" data-num="03">
+      <span class="svc-icon">☁️</span>
+      <div class="svc-name">Cloud &amp; Application Risk</div>
+      <p class="svc-desc">Configuration and access-control reviews across AWS and Azure, plus application, API, and mobile risk assessment benchmarked against CIS and NIST — the enterprise foundation this specialisation is built on.</p>
+      <ul class="svc-list">
+        <li>AWS &amp; Azure posture review (CIS / NIST)</li>
+        <li>IAM privilege &amp; least-privilege analysis</li>
+        <li>Application, API &amp; mobile risk assessment</li>
+      </ul>
+    </div>
+    <div class="svc-card reveal d3" data-num="04">
+      <span class="svc-icon">📋</span>
+      <div class="svc-name">GRC &amp; Regulatory Compliance</div>
+      <p class="svc-desc">Controls testing and audit documentation mapped to RBI Cybersecurity Framework, ISO 27001/27701, NIST CSF, and DPDPA — translating regulatory obligations into remediation roadmaps that stakeholders actually act on.</p>
+      <ul class="svc-list">
+        <li>RBI Cybersecurity Framework &amp; DPDPA</li>
+        <li>ISO 27001 / 27701 / 42001 · NIST CSF</li>
+        <li>Risk-prioritised remediation roadmaps</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact" class="s">
+  <div class="s-header">
+    <span class="s-num">06</span>
+    <h2 class="s-title">Get In <em>Touch</em></h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="contact-layout">
+    <div class="reveal-l">
+      <h3 class="contact-headline">Let's<br><span>Connect</span><br>Together.</h3>
+      <p class="contact-subtext">Open to conversations about Product Security, AI Security, and Adversarial ML roles — or just a good technical discussion. Reach out below.</p>
+      <div class="contact-channels">
+        <a href="https://github.com/REPLACE-WITH-GITHUB-USERNAME" class="channel" target="_blank">
+          <span class="channel-name">GitHub</span><span class="channel-val">Add your GitHub →</span>
+        </a>
+        <a href="mailto:harshvardhan.singh.sec@gmail.com" class="channel">
+          <span class="channel-name">Email</span><span class="channel-val">harshvardhan.singh.sec@gmail.com</span>
+        </a>
+        <a href="https://www.linkedin.com/in/harshvardhan-singh-cyberai0006" class="channel" target="_blank">
+          <span class="channel-name">LinkedIn</span><span class="channel-val">/in/harshvardhan-singh-cyberai0006</span>
+        </a>
+      </div>
+    </div>
+    <div class="reveal-r">
+      <form class="cf" action="https://formspree.io/f/xeepeplj" method="POST" onsubmit="handleSubmit(event)">
+        <div class="cf-row">
+          <div class="cf-group"><label>First Name</label><input type="text" name="name" placeholder="Rajan" required/></div>
+          <div class="cf-group"><label>Last Name</label><input type="text" name="name" placeholder="Mehta"/></div>
+        </div>
+        <div class="cf-group"><label>Email</label><input type="email" name="email" placeholder="rajan@company.com" required/></div>
+        <div class="cf-group">
+          <label>What's this about?</label>
+          <select>
+            <option value="">Select a topic...</option>
+            <option>AI Security / Adversarial ML Role</option>
+            <option>Product Security Role</option>
+            <option>Technology Risk / GRC Advisory</option>
+            <option>General Inquiry / Networking</option>
+          </select>
+        </div>
+        <div class="cf-group"><label>Message</label><textarea name="message" placeholder="Tell me a bit about the role or what you'd like to discuss..."></textarea></div>
+        <button class="cf-submit" type="submit"><span>Send Message →</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="f-left">© 2026 <span>Harshvardhan Singh</span> — All rights reserved</p>
+  <div class="f-right">
+    <a href="https://www.linkedin.com/in/harshvardhan-singh-cyberai0006" target="_blank">LinkedIn</a>
+    <a href="#hero">Top ↑</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── COUNTER ANIMATION ── */
+function animCount(el, target) {
+  let v = 0;
+  const t = setInterval(() => {
+    v += target / (1600 / 16);
+    if (v >= target) { el.textContent = target + '+'; clearInterval(t); }
+    else el.textContent = Math.floor(v);
+  }, 16);
+}
+let counted = false;
+new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !counted) {
+    counted = true;
+    setTimeout(() => {
+      document.querySelectorAll('.metric-val').forEach(el => {
+        animCount(el, parseInt(el.getAttribute('data-target')));
+      });
+    }, 400);
+  }
+}, { threshold: 0.4 }).observe(document.getElementById('hero'));
+
+/* ── SCROLL REVEAL ── */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.07 });
+document.querySelectorAll('.reveal, .reveal-l, .reveal-r').forEach(el => ro.observe(el));
+
+/* ── NAV ACTIVE ── */
+const secs  = document.querySelectorAll('section[id]');
+const navAs = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  secs.forEach(s => { if (window.scrollY >= s.offsetTop - 90) cur = s.id; });
+  navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--lime)' : ''; });
+}, { passive: true });
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+/* ── HAMBURGER ── */
+const hamburger = document.getElementById('hamburger');
+const navDrawer = document.getElementById('nav-drawer');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navDrawer.classList.toggle('open');
+  document.body.style.overflow = navDrawer.classList.contains('open') ? 'hidden' : '';
+});
+// Close drawer on any drawer link click
+navDrawer.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navDrawer.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+/* ── FORM SUBMIT ── */
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.cf-submit span');
+  const orig = btn.textContent;
+  btn.textContent = 'Sending…';
+  fetch(e.target.action, { method:'POST', body: new FormData(e.target), headers:{'Accept':'application/json'} })
+    .then(r => { btn.textContent = r.ok ? 'Sent ✓' : 'Error — try email'; })
+    .catch(() => { btn.textContent = 'Error — try email'; });
+}
+</script></body></html>
